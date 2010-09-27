@@ -42,13 +42,13 @@ class Partition extends ClauseStoragePartitioning with Logging{
     }
 
 
-    /*
+
     module0.forall({clause: FOLClause => clause.literals.exists(
       {literal : FOLNode => (literal match {
         case PositiveFOLLiteral(posL) => posL.top;
         case NegativeFOLLiteral(negL) => negL.top;
       }).substring(0, 2) == "O0"})})
-      */
+      
 
 
     List(
