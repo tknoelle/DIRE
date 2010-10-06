@@ -18,19 +18,21 @@ class Partition extends ClauseStoragePartitioning with Logging{
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/aminoacid_clauses.dfg"))
 
     //println(getPredicates(module0))
-    var predicates = getPredicates(module0)
-    var pos = List[String]()
-    var neg = List[String]()
-    val posregex = """(\w+)""".r
-    val negregex = """(¬\()(\w+)""".r
-    while(!predicates.isEmpty){
+    //var predicates = getPredicates(module0)
+    var pos = getPos(module0)
+    pos = getPredicates(pos)
+    var neg = getNeg(module0)
+    neg = getPredicates(neg)
+    //val posregex = """(\w+)""".r
+    //val negregex = """(¬\()(\w+)""".r
+    /*while(!predicates.isEmpty){
       predicates.head match {
         case posregex(a) => pos = pos ::: List(a)
         case negregex(a, b) => neg = neg ::: List(b)
         case _ => println("kein Match: "+ predicates.head)
       }
       predicates = predicates.tail
-    }
+    } */
     //println(pos)
     //println(neg)
     val t = getPredicateOccurence(pos, neg)
@@ -57,8 +59,53 @@ class Partition extends ClauseStoragePartitioning with Logging{
   }
 
 
-
-  def getPredicates(clauses: CNFClauseStore) = {
+  def getPos(clauses: CNFClauseStore) = {
+    var c = clauses
+    var pos = List[String]()
+    while(!c.isEmpty){
+      var tmp = c.head.positiveLiterals.toArray
+      var size = tmp.size
+      var i = 0
+      while(i < size){
+        pos = pos ::: List(tmp(i).toString)
+        i = i + 1
+      }
+      c = c.tail
+    }
+    pos
+  }
+  def getNeg(clauses: CNFClauseStore) = {
+    var c = clauses
+    var neg = List[String]()
+    while(!c.isEmpty){
+      var tmp = c.head.negativeLiterals.toArray
+      var size = tmp.size
+      var i = 0
+      while(i < size){
+        neg = neg ::: List(tmp(i).toString)
+        i = i + 1
+      }
+      c = c.tail
+    }
+    neg
+  }
+  def getPredicates(literal: List[String]) = {
+    var lit = literal
+    var l = List[String]()
+    val posregex = """(\w+)\(?.*""".r
+    val negregex = """(¬\()(\w+)\(?.*""".r
+    while(!lit.isEmpty){
+      lit.head match {
+        case posregex(a) => l = l ::: List(a)
+        case negregex(a, b) => l = l ::: List(b)
+        case _ => println("kein Match: "+ lit.head)
+      }
+      lit = lit.tail
+    }
+    l
+  }
+  /*def getPredicates(clauses: CNFClauseStore) = {
+    println(clauses.head.positiveLiterals)
     val regex = """\[?(¬?\(?\w+)\([^()]*\(?[^()]*\)?\)\)?\]?""".r
     var array = clauses.head.toString.split('V')
     val i = array.length
@@ -83,9 +130,10 @@ class Partition extends ClauseStoragePartitioning with Logging{
         val regex(node) = array(t)
         predicates = predicates ::: List(node)
         t = t+1
+        // hier Liste für jede Klausel anlegen um das Kantengewich zu bestimmen
       }
       c = c.tail
-    }
+    }*/
 
            //[¬(Hydrophobicity(U))VHydrophobic(U)VHydrophilic(U)]
     //val reg3 =  """\[(¬?\(?\w+)\([^()]*\(?[^()]*\)?\)\)?V?(¬?\(?\w+)\([^()]*\(?[^()]*\)?\)\)?V?(¬?\(?\w+)\([^()]*\(?[^()]*\)?\)\)\]""".r
@@ -109,8 +157,8 @@ class Partition extends ClauseStoragePartitioning with Logging{
      // }
      // c = c.tail
    // }
-    predicates
-  }
+ //   predicates
+  //}
 
   def getPredicateOccurence(pos: List[String], neg: List[String]): List[Node] = {
     var nodes: List[Node] = List()
