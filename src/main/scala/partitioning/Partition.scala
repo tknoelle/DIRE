@@ -16,17 +16,17 @@ class Partition extends ClauseStoragePartitioning with Logging{
 
   override def partition(clauses: ClauseStorage) = {
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/aminoacid_clauses.dfg"))
-    var pos = getPos(module0)
-    pos = getPredicates(pos)
-    var neg = getNeg(module0)
-    neg = getPredicates(neg)
-    val t = getPredicateOccurence(pos, neg)
+
+    val t = getNodeWeight(module0)
     var i = 0
     while(i<t.length){
       var tmp = t.apply(i)
       println(tmp.getName +", Knotengewicht: "+ tmp.getWeight +", Pos: "+ tmp.getPos +", Neg: "+ tmp.getNeg)
       i = i+1
     }
+
+    
+    getEdgeWeight(module0)
 
     module0.forall({clause: FOLClause => clause.literals.exists(
       {literal : FOLNode => (literal match {
@@ -39,7 +39,23 @@ class Partition extends ClauseStoragePartitioning with Logging{
       )
   }
 
+  def getNodeWeight(clauses: CNFClauseStore) = {
+    var pos = getPos(clauses)
+    pos = getPredicates(pos)
+    var neg = getNeg(clauses)
+    neg = getPredicates(neg)
+    val nodeWeight = getPredicateOccurence(pos, neg)
+    nodeWeight
+  }
 
+  def getEdgeWeight(clauses: CNFClauseStore) = {
+    var clauselist = getClauseList(clauses)
+    println(getEdges(clauselist))
+  }
+
+  /**
+   * get all positive literals from the clausestore in a list
+   */
   def getPos(clauses: CNFClauseStore) = {
     var c = clauses
     var pos = List[String]()
@@ -56,6 +72,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
     pos
   }
 
+  /**
+   * get all negative literals from the clausestore in a list
+   */
   def getNeg(clauses: CNFClauseStore) = {
     var c = clauses
     var neg = List[String]()
@@ -72,6 +91,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
     neg
   }
 
+  /**
+   * extracts predicates from a literal list
+   */
   def getPredicates(literal: List[String]) = {
     var lit = literal
     var l = List[String]()
@@ -88,6 +110,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
     l
   }
 
+  /**
+   * checks how often a predicate is in the list
+   */
   def getPredicateOccurence(pos: List[String], neg: List[String]): List[Node] = {
     var nodes: List[Node] = List()
     var p = pos
@@ -127,6 +152,54 @@ class Partition extends ClauseStoragePartitioning with Logging{
       i = i+1
     }
     return -1
+  }
+
+  def getClauseList(clauses: CNFClauseStore) = {
+    var clauselist = List[List[String]]()
+    var c = clauses
+    while(!c.isEmpty){
+      var tmp = c.head.absoluteLiterals.toArray
+      var size = tmp.size
+      var i = 0
+      var clause = List[String]()
+      while(i < size){
+        clause = clause ::: List(tmp(i).toString)
+        i = i + 1
+      }
+      clauselist = clauselist ::: List(clause)
+      c = c.tail
+    }
+    clauselist
+  }
+
+  def getEdges(clauselist: List[List[String]]) = {
+    var cl = clauselist
+    var edges = List[List[String]]()
+    while(!cl.isEmpty){
+      var s = cl.head.size
+      var t = 0
+      var x = ""
+      var y = ""
+      val regex = """(\w+)\(?.*""".r
+      while(t<s-1){
+        var u = t+1
+        cl.head(t) match {
+            case regex(a) => x = a
+            case _ => println("kein Match: "+ cl.head(t))
+        }
+        while(u<s){
+          cl.head(u) match {
+            case regex(a) => y = a
+            case _ => println("kein Match: "+ cl.head(t))
+          }
+          edges = edges ::: List(List(x, y))
+          u = u + 1
+        }
+        t = t + 1
+      }
+      cl = cl.tail
+    }
+    edges
   }
 
 
