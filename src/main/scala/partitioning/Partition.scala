@@ -203,4 +203,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
   }
 
 
+  def getEdgeOccurence(edges: List[List[String]]) = {
+    
+  }
+
+
 }
