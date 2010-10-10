@@ -1,12 +1,10 @@
 package partitioning
 
-import core.containers.{CNFClauseStore, ClauseStorage, Node}
+import core.containers.{CNFClauseStore, ClauseStorage, Node, Edge}
 import domain.fol.ast.{NegativeFOLLiteral, PositiveFOLLiteral, FOLNode, FOLClause}
 import domain.fol.parsers.SPASSIntermediateFormatParser
 import helpers.Logging
 import java.io.File
-import scala.util.matching.Regex
-
 
 
 
@@ -17,7 +15,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
   override def partition(clauses: ClauseStorage) = {
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/aminoacid_clauses.dfg"))
 
-    val t = getNodeWeight(module0)
+
+
+    /*val t = getNodeWeight(module0)
     var i = 0
     while(i<t.length){
       var tmp = t.apply(i)
@@ -25,8 +25,16 @@ class Partition extends ClauseStoragePartitioning with Logging{
       i = i+1
     }
 
-    
-    getEdgeWeight(module0)
+    val x = getEdgeWeight(module0)
+    i = 0
+    while(i<x.length){
+      var tmp = x.apply(i)
+      println(tmp.getNodes +", Häufigkeit: "+ tmp.getOccurence)
+      i = i+1
+    }      */
+
+    newGraph(getEdgeWeight(module0), getNodeWeight(module0))
+
 
     module0.forall({clause: FOLClause => clause.literals.exists(
       {literal : FOLNode => (literal match {
@@ -39,18 +47,88 @@ class Partition extends ClauseStoragePartitioning with Logging{
       )
   }
 
+  def newGraph(edges: List[Edge], nodes: List[Node]) = {
+    var newGraph = List[Edge]()
+    var e = edges
+    var n = nodes
+    val nodenum = n.size
+    var one = List[String]()
+    var two = List[String]()
+    val posregex = """(\w+)""".r
+    val negregex = """¬(\w+)""".r
+    var x = 0
+    while(!e.isEmpty && x < nodenum - 1){
+      val tmp = e.head.getNodes
+      var node1 = tmp.apply(0)
+      var node2 = tmp.apply(1)
+      node1 match {
+        case posregex(a) =>
+        case negregex(a) => node1 = a}
+      node2 match {
+        case posregex(a) =>
+        case negregex(a) => node2 = a}
+      if(two.contains(node1) || two.contains(node2)){
+
+      }
+      else{
+        if(one.contains(node1)){
+          two = two ::: List(node1)
+          one = one.remove(node1 => true)     //should be filterNot
+        }
+        else{
+          one = one ::: List(node1)
+        }
+        if(one.contains(node2)){
+          two = two ::: List(node2)
+          one = one.remove(node2 => true)     // should be filterNot
+        }
+        else{
+          one = one ::: List(node2)
+        }
+
+        newGraph = newGraph ::: List(e.head)
+        var i: Int = findInList(n, node1)
+        n.apply(i).setCon(true)
+        i = findInList(n, node2)
+        n.apply(i).setCon(true)
+        x = x + 1
+      }
+      e = e.tail     
+    }
+
+    // Graphen mit zufälligen Kanten füllen, wenn x < nodenum - 1
+
+
+    println("Anzahl an Knoten: "+ nodenum)
+    println("Anzahl an eingefügten Kanten: "+ x)
+    println("Knoten mit einer Kante: "+ one)
+    println("Knoten mit zwei Kante: "+ two)
+    println("Neuer Graph:")
+    var i = 0
+    while(i<newGraph.length){
+      var tmp = newGraph.apply(i)
+      println(tmp.getNodes +", Häufigkeit: "+ tmp.getOccurence)
+      i = i+1
+    }
+
+    
+  }
+
   def getNodeWeight(clauses: CNFClauseStore) = {
     var pos = getPos(clauses)
     pos = getPredicates(pos)
     var neg = getNeg(clauses)
     neg = getPredicates(neg)
-    val nodeWeight = getPredicateOccurence(pos, neg)
+    var nodeWeight: List[Node] = getPredicateOccurence(pos, neg)
+    nodeWeight = nodeWeight sort (_ > _)   // sortBy would be better
     nodeWeight
   }
 
   def getEdgeWeight(clauses: CNFClauseStore) = {
     var clauselist = getClauseList(clauses)
-    println(getEdges(clauselist))
+    var edges: List[Edge] = getEdgeOccurence(getEdges(clauselist))
+    edges = edges sort (_ > _)   // sortBy would be better
+    edges
   }
 
   /**
@@ -119,7 +197,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
     while(!p.isEmpty){
       var i: Int = findInList(nodes, p.head)
       if(i == -1){
-        nodes = nodes ::: List(new Node(p.head, 1, 1, 0))
+        nodes = nodes ::: List(new Node(p.head, 1, 1, 0, false))
       }
       else{
         nodes.apply(i).setPos(nodes.apply(i).getPos + 1)
@@ -132,7 +210,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
     while(!n.isEmpty){
       var i: Int = findInList(nodes, n.head)
       if(i == -1){
-        nodes = nodes ::: List(new Node(n.head, 1, 0, 1))
+        nodes = nodes ::: List(new Node(n.head, 1, 0, 1, false))
       }
       else{
         nodes.apply(i).setNeg(nodes.apply(i).getNeg + 1)
@@ -158,12 +236,19 @@ class Partition extends ClauseStoragePartitioning with Logging{
     var clauselist = List[List[String]]()
     var c = clauses
     while(!c.isEmpty){
-      var tmp = c.head.absoluteLiterals.toArray
-      var size = tmp.size
+      var ptmp = c.head.positiveLiterals.toArray
+      var ntmp = c.head.negativeLiterals.toArray
+      var size = ptmp.size
       var i = 0
       var clause = List[String]()
       while(i < size){
-        clause = clause ::: List(tmp(i).toString)
+        clause = clause ::: List(ptmp(i).toString)
+        i = i + 1
+      }
+      size = ntmp.size
+      i = 0
+      while(i < size){
+        clause = clause ::: List(ntmp(i).toString)
         i = i + 1
       }
       clauselist = clauselist ::: List(clause)
@@ -180,16 +265,19 @@ class Partition extends ClauseStoragePartitioning with Logging{
       var t = 0
       var x = ""
       var y = ""
-      val regex = """(\w+)\(?.*""".r
+      val posregex = """(\w+)\(?.*""".r
+      val negregex = """¬\((\w+)\(?.*""".r
       while(t<s-1){
         var u = t+1
         cl.head(t) match {
-            case regex(a) => x = a
+            case posregex(a) => x = a
+            case negregex(a) => x = "¬"+ a
             case _ => println("kein Match: "+ cl.head(t))
         }
         while(u<s){
           cl.head(u) match {
-            case regex(a) => y = a
+            case posregex(a) => y = a
+            case negregex(a) => y = "¬"+ a
             case _ => println("kein Match: "+ cl.head(t))
           }
           edges = edges ::: List(List(x, y))
@@ -203,8 +291,32 @@ class Partition extends ClauseStoragePartitioning with Logging{
   }
 
 
-  def getEdgeOccurence(edges: List[List[String]]) = {
-    
+  def getEdgeOccurence(edges: List[List[String]]): List[Edge] = {
+    var edgeocurrence: List[Edge] = List()
+    var e = edges
+    while(!e.isEmpty){
+      var i: Int = findEdgeInList(edgeocurrence, e.head)
+      if(i == -1){
+        edgeocurrence = edgeocurrence ::: List(new Edge(e.head, 1))
+      }
+      else{
+        edgeocurrence.apply(i).setOccurence(edgeocurrence.apply(i).getOccurence + 1)
+      }
+      e = e.tail
+    }
+
+    return edgeocurrence
+  }
+
+  def findEdgeInList(edges: List[Edge], edge: List[String]): Int = {
+    var i: Int = 0
+    while(i<edges.length){
+      if(edges.apply(i).getNodes.equals(edge)){
+        return i
+      }
+      i = i+1
+    }
+    return -1
   }
 
 

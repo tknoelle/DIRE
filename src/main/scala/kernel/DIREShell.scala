@@ -495,7 +495,7 @@ object DIREShell extends Application with Actor {
 
   }
 
-def knotengewicht: List[Actor] = {
+def partitionTest: List[Actor] = {
     // spawn remote reasoners
 
     // echeck if there are enought conpute nodes in the cluster
