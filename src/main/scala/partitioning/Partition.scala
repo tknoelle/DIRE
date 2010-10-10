@@ -51,67 +51,124 @@ class Partition extends ClauseStoragePartitioning with Logging{
     var newGraph = List[Edge]()
     var e = edges
     var n = nodes
-    val nodenum = n.size
+    val nodenum = n.length
     var one = List[String]()
     var two = List[String]()
     val posregex = """(\w+)""".r
     val negregex = """¬(\w+)""".r
     var x = 0
-    while(!e.isEmpty && x < nodenum - 1){
-      val tmp = e.head.getNodes
+    while(!e.isEmpty){
+      var tmp = e.head.getNodes
       var node1 = tmp.apply(0)
       var node2 = tmp.apply(1)
       node1 match {
-        case posregex(a) =>
+        case posregex(a) => node1 = a
         case negregex(a) => node1 = a}
       node2 match {
-        case posregex(a) =>
+        case posregex(a) => node2 = a
         case negregex(a) => node2 = a}
-      if(two.contains(node1) || two.contains(node2)){
+      if(!two.contains(node1) && !two.contains(node2)){
+        
+        if(!edgeCon(node1, node2, newGraph, one)){
+          //println(two)
+          //println(one)
+          //println(node1 +" "+ node2)
+          if(one.contains(node1)){
+            two = two ::: List(node1)
+            one = one -- List(node1)        //should be filterNot
+          }
+          else{
+            one = one ::: List(node1)
+          }
 
+          if(one.contains(node2)){
+            two = two ::: List(node2)
+            one = one -- List(node2)  //should be filterNot
+          }
+          else{
+            one = one ::: List(node2)
+          }
+          newGraph = newGraph ::: List(e.head)
+          var i: Int = findInList(n, node1)
+          n.apply(i).setCon(true)
+          i = findInList(n, node2)
+          n.apply(i).setCon(true)
+          x = x + 1
+        }
       }
-      else{
-        if(one.contains(node1)){
-          two = two ::: List(node1)
-          one = one.remove(node1 => true)     //should be filterNot
-        }
-        else{
-          one = one ::: List(node1)
-        }
-        if(one.contains(node2)){
-          two = two ::: List(node2)
-          one = one.remove(node2 => true)     // should be filterNot
-        }
-        else{
-          one = one ::: List(node2)
-        }
+      
 
-        newGraph = newGraph ::: List(e.head)
-        var i: Int = findInList(n, node1)
-        n.apply(i).setCon(true)
-        i = findInList(n, node2)
-        n.apply(i).setCon(true)
-        x = x + 1
-      }
-      e = e.tail     
+      e = e.tail
     }
-
     // Graphen mit zufälligen Kanten füllen, wenn x < nodenum - 1
 
-
+    var i = 0
     println("Anzahl an Knoten: "+ nodenum)
     println("Anzahl an eingefügten Kanten: "+ x)
+    println("Anzahl an Kanten im Originalgraph: "+ edges.length)
+    println("Knoten ohne Kanten:")
+    while(i<n.length){
+      var tmp = n.apply(i)
+      if(!tmp.getCon){println(tmp.getName +", Knotengewicht: "+ tmp.getWeight +", Pos: "+ tmp.getPos +", Neg: "+ tmp.getNeg)}
+      i = i+1
+    }
+    println()
     println("Knoten mit einer Kante: "+ one)
     println("Knoten mit zwei Kante: "+ two)
     println("Neuer Graph:")
-    var i = 0
+    i = 0
     while(i<newGraph.length){
       var tmp = newGraph.apply(i)
-      println(tmp.getNodes +", Häufigkeit: "+ tmp.getOccurence)
+      println(tmp.getNodes +", Häufigkeit alter Graph: "+ tmp.getOccurence)
       i = i+1
     }
+    println()
 
     
+  }
+
+  def edgeCon(node1: String, node2: String,graph: List[Edge], one: List[String]): Boolean = {
+    if(node1.equals(node2)){
+      return true
+    }
+    var i = findNode(graph, node1)
+    if(i == -1){
+      return false
+    }
+    var g = graph.take(i) ::: graph.drop(i + 1)
+    val posregex = """(\w+)""".r
+    val negregex = """¬(\w+)""".r
+    if(graph.apply(i).getNodes.apply(0).equals(node1) || graph.apply(i).getNodes.apply(0).equals("¬"+ node1)){
+      var n = graph(i).getNodes.apply(1)
+      n match {
+        case posregex(a) =>
+        case negregex(a) => n = a}
+      return edgeCon(n, node2, g, one)
+    }
+    else{
+      var n = graph(i).getNodes.apply(0)
+      n match {
+        case posregex(a) =>
+        case negregex(a) => n = a}
+      return edgeCon(n, node2, g, one)
+    }
+
+  }
+
+  def findNode(edges: List[Edge], node:String): Int = {
+    var i = 0
+    var e = edges
+    while(!e.isEmpty){
+      if(e.head.getNodes.contains(node)){
+        return i
+      }
+      if(e.head.getNodes.contains("¬"+ node)){
+        return i
+      }
+      i = i + 1
+      e = e.tail
+    }
+    return -1
   }
 
   def getNodeWeight(clauses: CNFClauseStore) = {
