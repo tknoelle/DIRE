@@ -70,9 +70,6 @@ class Partition extends ClauseStoragePartitioning with Logging{
       if(!two.contains(node1) && !two.contains(node2)){
         
         if(!edgeCon(node1, node2, newGraph, one)){
-          //println(two)
-          //println(one)
-          //println(node1 +" "+ node2)
           if(one.contains(node1)){
             two = two ::: List(node1)
             one = one -- List(node1)        //should be filterNot
@@ -119,7 +116,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
     i = 0
     while(i<newGraph.length){
       var tmp = newGraph.apply(i)
-      println(tmp.getNodes +", Häufigkeit alter Graph: "+ tmp.getOccurence)
+      println(tmp.getNodes +" Häufigkeit alter Graph: "+ tmp.getOccurence)
       i = i+1
     }
     println()
