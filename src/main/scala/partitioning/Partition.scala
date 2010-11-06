@@ -4,7 +4,7 @@ import core.containers.{CNFClauseStore, ClauseStorage, Node, Edge}
 import domain.fol.ast.{NegativeFOLLiteral, PositiveFOLLiteral, FOLNode, FOLClause}
 import domain.fol.parsers.SPASSIntermediateFormatParser
 import helpers.Logging
-import java.io.File
+import java.io._
 
 
 
@@ -33,7 +33,8 @@ class Partition extends ClauseStoragePartitioning with Logging{
       i = i+1
     }      */
 
-    newGraph(getEdgeWeight(module0), getNodeWeight(module0))
+    val g = newGraph(getEdgeWeight(module0), getNodeWeight(module0))
+    printGraph(g, "/home/tk/hiwi/DIRE/input/conf/test.dfg")
 
 
     module0.forall({clause: FOLClause => clause.literals.exists(
@@ -348,8 +349,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
       i = i+1
     }
     println()
-
-
+    newGraph
   }
 
   /**
@@ -392,6 +392,30 @@ class Partition extends ClauseStoragePartitioning with Logging{
       e = e.tail
     }
     return -1
+  }
+
+  /**
+   * prints the graph into the file
+   */
+  def printGraph(g: List[Edge], file: String) = {
+    var i = 0
+    val bufferedWriter = new BufferedWriter(new FileWriter(file))
+    try {
+      bufferedWriter.write("list_of_clauses().\n")
+      while(i<g.length){
+        var tmp = g.apply(i)
+        var n = tmp.getNodes
+        bufferedWriter.write("  clause( || ")
+        bufferedWriter.write(n.apply(0) +" -> ")
+        bufferedWriter.write(n.apply(1) +").\n")
+        i = i+1
+      }
+      bufferedWriter.write("end_of_list. ")
+    } finally {
+      try {
+      bufferedWriter.close()
+      } catch { case _ => }
+    }
   }
 
    /*
