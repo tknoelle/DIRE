@@ -328,24 +328,24 @@ class Partition extends ClauseStoragePartitioning with Logging{
       j = i + 1
     }
 
-    println("Anzahl an Knoten: "+ nodenum)
-    println("Anzahl an eingefügten Kanten: "+ x)
-    println("Anzahl an Kanten im Originalgraph: "+ edges.length)
-    println("Knoten ohne Kanten:")
+    println("Number of nodes: "+ nodenum)
+    println("Number of inserted edges: "+ x)
+    println("Number of edges in the original graph: "+ edges.length)
+    println("Nodes without edges:")
     i = 0
     while(i<n.length){
       var tmp = n.apply(i)
-      if(!tmp.getCon){println(tmp.getName +", Knotengewicht: "+ tmp.getWeight +", Pos: "+ tmp.getPos +", Neg: "+ tmp.getNeg)}
+      if(!tmp.getCon){println(tmp.getName +", Nodeweight: "+ tmp.getWeight +", Pos: "+ tmp.getPos +", Neg: "+ tmp.getNeg)}
       i = i+1
     }
     println()
-    println("Knoten mit einer Kante: "+ one)
-    println("Knoten mit zwei Kante: "+ two)
-    println("Neuer Graph:")
+    println("Nodes with one edge: "+ one)
+    println("Nodes with two edges: "+ two)
+    println("New graph:")
     i = 0
     while(i<newGraph.length){
       var tmp = newGraph.apply(i)
-      println(tmp.getNodes +" Häufigkeit alter Graph: "+ tmp.getOccurence)
+      println(tmp.getNodes +" occurrence old graph: "+ tmp.getOccurence)
       i = i+1
     }
     println()
