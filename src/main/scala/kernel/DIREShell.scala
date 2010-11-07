@@ -14,7 +14,7 @@ import helpers.{DumpableString, HelperFunctions}
 import kernel._
 import dispatching.{DALCDispatcherActor, ToVoidDispatchingActor}
 import net.lag.configgy.Configgy
-import partitioning.{Partition, ManualConfExampleMerger, ManualConfExamplePartitioner}
+import partitioning.{Test, Partition, ManualConfExampleMerger, ManualConfExamplePartitioner}
 import recording.{ReasonerEvent, NaiveClauseRecorder}
 import runtime.RichString
 import se.scalablesolutions.akka.actor.{ActorRegistry, Actor}
@@ -513,6 +513,27 @@ def partitionTest: List[Actor] = {
   rs
 
   
+
+  }
+
+  def test: List[Actor] = {
+    // spawn remote reasoners
+
+    // echeck if there are enought conpute nodes in the cluster
+    // spawn 5 local reasoners
+    val rs = localReasoners(5).toList
+    val ns = rs.map(_.uuid)
+
+
+    //val reasoner2address: Map[Actor, String] = (rs zip rs.map(_.uuid)).foldLeft(Map[Actor, String]())(_ + _)
+
+    // partition the ontology
+    val partitioner = new Test
+    val partitions = partitioner.partition(CNFClauseStore()) // pass dummy empty store
+
+  rs
+
+
 
   }
 
