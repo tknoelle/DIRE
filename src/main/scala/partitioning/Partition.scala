@@ -34,7 +34,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
     }      */
 
     val g = newGraph(getEdgeWeight(module0), getNodeWeight(module0))
-    printGraph(g, "/home/tk/hiwi/DIRE/input/conf/test.dfg")
+    printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output.dire")
 
 
     module0.forall({clause: FOLClause => clause.literals.exists(
