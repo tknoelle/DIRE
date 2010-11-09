@@ -13,7 +13,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
   val parser = SPASSIntermediateFormatParser
 
   override def partition(clauses: ClauseStorage) = {
-    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/merged.dire"))
+    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/aminoacid_clauses.dfg"))
 
 
 
