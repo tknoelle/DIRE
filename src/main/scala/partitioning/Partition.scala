@@ -13,7 +13,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
   val parser = SPASSIntermediateFormatParser
 
   override def partition(clauses: ClauseStorage) = {
-    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/aminoacid_clauses.dfg"))
+    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/merged.dire"))
 
 
 
@@ -66,7 +66,6 @@ class Partition extends ClauseStoragePartitioning with Logging{
    */
   def getEdgeWeight(clauses: CNFClauseStore) = {
     var edges: List[Edge] = getEdgeOccurence(getEdges(clauses))
-    println(edges.size)
     edges = edges sort (_ > _)   // sortBy would be better
     edges
   }
