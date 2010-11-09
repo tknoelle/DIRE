@@ -66,6 +66,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
    */
   def getEdgeWeight(clauses: CNFClauseStore) = {
     var edges: List[Edge] = getEdgeOccurence(getEdges(clauses))
+    println(edges.size)
     edges = edges sort (_ > _)   // sortBy would be better
     edges
   }
