@@ -180,7 +180,7 @@ class Test extends ClauseStoragePartitioning with Logging{
    */
   def getEdgeOccurence(edge: List[Node], edges: List[EdgeTest]): List[EdgeTest] = {
     var edgeocurrence = edges
-    var i: Int = edges.indexOf(edge)
+    val i = findEdge(edge, edges)
     if(i == -1){
         edgeocurrence = edgeocurrence ::: List(new EdgeTest(edge, 1))
     }
@@ -188,6 +188,21 @@ class Test extends ClauseStoragePartitioning with Logging{
         edgeocurrence.apply(i).setOccurence(edgeocurrence.apply(i).getOccurence + 1)
     }
     return edgeocurrence
+  }
+
+  def findEdge(edge: List[Node], edges: List[EdgeTest]): Int = {
+    var e = edges
+    val node1 = edge.head
+    val node2 = edge.tail.head
+    var i = 0
+    while(!e.isEmpty){
+      var nodes = e.head.getNodes
+      if (e.head.getNodes.contains(node1) && e.head.getNodes.contains(node2)){
+        return i
+      }
+      e = e.tail
+    }
+    return -1
   }
 /*
 
