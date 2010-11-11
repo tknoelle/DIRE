@@ -3,7 +3,7 @@ package partitioning
 import core.containers.{CNFClauseStore, ClauseStorage, Node, EdgeTest}
 import domain.fol.ast.{NegativeFOLLiteral, PositiveFOLLiteral, FOLNode, FOLClause}
 import domain.fol.parsers.SPASSIntermediateFormatParser
-import scala.collection.immutable.{HashSet}
+import scala.collection.immutable.{HashMap}
 import helpers.Logging
 import java.io._
 
@@ -13,6 +13,8 @@ class Test extends ClauseStoragePartitioning with Logging{
 
   val parser = SPASSIntermediateFormatParser
   var nodes = List[Node]()
+  var hashnodes = HashMap[String, Node]()
+  var hashedges = HashMap[Node, EdgeTest]()
   
   override def partition(clauses: ClauseStorage) = {
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/aminoacid_clauses.dfg"))
@@ -52,6 +54,10 @@ class Test extends ClauseStoragePartitioning with Logging{
 
   def test(clauses: CNFClauseStore) = {
     val x = getLiterals(clauses)
+    var z = HashMap[String, Int]()
+    z = z + ("test" -> 3)
+    z = z + ("x" -> 4)
+    println(z.contains("x"))
     println("Kantenanzahl: "+x.size)
     println("Knotenanzahl: "+nodes.size)
     x
@@ -84,6 +90,8 @@ class Test extends ClauseStoragePartitioning with Logging{
   }
 
 
+  // Hashmap für nodes und edges benutzen (string -> node) und (node -> edge)
+
 
    def getPredicateOccurence(literals: List[String]): List[EdgeTest] = {
      val posregex = """(\w+)\(?.*""".r
@@ -93,13 +101,13 @@ class Test extends ClauseStoragePartitioning with Logging{
      var d = List[Node]()
      while(!l.isEmpty){
         l.head match {
-        case posregex(a) => //println(a)//d = d ::: List(getNode(a, true))
-        case negregex(a) => //println(a)//d = d ::: List(getNode(a, false))
+        case posregex(a) => d = d ::: List(getNode(a, true))
+        case negregex(a) => d = d ::: List(getNode(a, false))
         case _ => println("kein Match: "+ l.head)
         }
         l = l.tail            //prüfen, ob ich schon früher mit getedges anfangen kann
         //edges =  edges ::: getEdges(d)
-       edges = edges ::: List(new EdgeTest(d, 1))
+       //edges = edges ::: List(new EdgeTest(d, 1))
     }
     edges
   }
@@ -110,6 +118,35 @@ class Test extends ClauseStoragePartitioning with Logging{
    * methode noch viel zu langsam muss umgeschrieben werden
    */
   def getNode(name: String, pos: boolean): Node = {
+    if(hashnodes.contains(name)){
+      if(pos){
+        var node = hashnodes(name)
+        node.setPos(node.getPos+1)
+        node.setWeight
+        return node
+      }
+      else{
+        var node = hashnodes(name)
+        node.setNeg(node.getNeg)
+        node.setWeight
+        return node
+      }
+    }
+    else{
+       if(pos){
+        val node = new Node(name, 1, 1, 0, false, List[Node]())
+        nodes = nodes ::: List(node)
+        hashnodes = hashnodes + (name -> node)
+        return node
+      }
+      else{
+        val node = new Node(name, 1, 0, 1, false, List[Node]())
+        nodes = nodes ::: List(node)
+        hashnodes = hashnodes + (name -> node)
+        return node
+       }
+    }
+    /*
     var i: Int = nodes.indexOf(name)
     if(pos){
      if(i == -1){
@@ -136,7 +173,7 @@ class Test extends ClauseStoragePartitioning with Logging{
         val node = nodes.apply(i)
         return node
       }
-    }
+    } */
   }
 
   def findNode(name: String): Int = {
