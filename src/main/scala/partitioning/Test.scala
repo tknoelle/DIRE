@@ -12,7 +12,7 @@ import java.io._
 class Test extends ClauseStoragePartitioning with Logging{
 
   val parser = SPASSIntermediateFormatParser
-  var nodes = List[Node]()
+  var nodes = List[Node]()   // die liste könnte man durch hashnodes.value ersetzen, hashnodes.value liefert einen iterator mit allen knoten
   var hashnodes = HashMap[String, Node]()
   var hashedges = HashMap[Node, EdgeTest]()
   
@@ -57,7 +57,7 @@ class Test extends ClauseStoragePartitioning with Logging{
     var z = HashMap[String, Int]()
     z = z + ("test" -> 3)
     z = z + ("x" -> 4)
-    println(z.contains("x"))
+    z.values foreach println
     println("Kantenanzahl: "+x.size)
     println("Knotenanzahl: "+nodes.size)
     x
@@ -114,8 +114,6 @@ class Test extends ClauseStoragePartitioning with Logging{
 
   /**
    * updates the node with the name and returns the node
-   *
-   * methode noch viel zu langsam muss umgeschrieben werden
    */
   def getNode(name: String, pos: boolean): Node = {
     if(hashnodes.contains(name)){
@@ -146,49 +144,7 @@ class Test extends ClauseStoragePartitioning with Logging{
         return node
        }
     }
-    /*
-    var i: Int = nodes.indexOf(name)
-    if(pos){
-     if(i == -1){
-       val node = new Node(name, 1, 1, 0, false, List[Node]())
-       nodes = nodes ::: List(node)
-       return node
-     }
-     else{
-       nodes.apply(i).setPos(nodes.apply(i).getPos + 1)
-       nodes.apply(i).setWeight
-       val node = nodes.apply(i)
-       return node
-     }
-    }
-    else{
-      if(i == -1){
-        val node = new Node(name, 1, 0, 1, false, List[Node]())
-        nodes = nodes ::: List(node)
-        return node
-      }
-      else{
-        nodes.apply(i).setNeg(nodes.apply(i).getNeg + 1)
-        nodes.apply(i).setWeight
-        val node = nodes.apply(i)
-        return node
-      }
-    } */
   }
-
-  def findNode(name: String): Int = {
-    var n = nodes
-    var i = 0
-    while (!n.isEmpty){
-      if(n.head.getName == name){
-        return i
-      }
-      i = i+1
-      n = n.tail
-    }
-    return -1
-  }
-
 
    //arbeitet noch nicht richtig, gibt viel zu viele kanten zurück
   def getEdges(clauses: List[Node]): List[EdgeTest] = {
