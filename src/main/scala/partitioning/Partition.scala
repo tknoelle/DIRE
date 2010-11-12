@@ -16,23 +16,6 @@ class Partition extends ClauseStoragePartitioning with Logging{
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/aminoacid_clauses.dfg"))
 
 
-
-    /*val t = getNodeWeight(module0)
-    var i = 0
-    while(i<t.length){
-      var tmp = t.apply(i)
-      println(tmp.getName +", Knotengewicht: "+ tmp.getWeight +", Pos: "+ tmp.getPos +", Neg: "+ tmp.getNeg)
-      i = i+1
-    }
-
-    val x = getEdgeWeight(module0)
-    i = 0
-    while(i<x.length){
-      var tmp = x.apply(i)
-      println(tmp.getNodes +", Häufigkeit: "+ tmp.getOccurence)
-      i = i+1
-    }      */
-
     val n = getNodeWeight(module0)
     val g = newGraph(getEdgeWeight(module0), n)
     printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
