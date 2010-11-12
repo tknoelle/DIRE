@@ -54,12 +54,13 @@ class Test extends ClauseStoragePartitioning with Logging{
 
   def test(clauses: CNFClauseStore) = {
     val x = getLiterals(clauses)
-    var z = HashMap[String, Int]()
-    z = z + ("test" -> 3)
-    z = z + ("x" -> 4)
-    z.values foreach println
     println("Kantenanzahl: "+x.size)
     println("Knotenanzahl: "+nodes.size)
+    var tmp = nodes sort (_ > _)
+    while(!tmp.isEmpty){
+      println(tmp.head.getName+" "+ tmp.head.getWeight+" "+tmp.head.getPos+ " "+ tmp.head.getNeg)
+      tmp = tmp.tail
+    }
     x
   }
 
@@ -125,7 +126,7 @@ class Test extends ClauseStoragePartitioning with Logging{
       }
       else{
         var node = hashnodes(name)
-        node.setNeg(node.getNeg)
+        node.setNeg(node.getNeg+1)
         node.setWeight
         return node
       }
