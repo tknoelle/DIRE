@@ -9,77 +9,77 @@ list_of_clauses().
   clause( || hasSize -> Small).
   clause( || hasSideChainStructure -> Aromatic).
   clause( || hasCharge -> Positive).
-  clause( || K -> A).
-  clause( || Y -> Aromatic).
-  clause( || K -> Aliphatic).
-  clause( || W -> Y).
-  clause( || Q -> P).
-  clause( || N -> P).
+  clause( || T -> Polar).
+  clause( || F -> P).
+  clause( || A -> E).
+  clause( || D -> E).
   clause( || H -> Large).
-  clause( || R -> A).
-  clause( || Negative -> Neutral).
-  clause( || I -> M).
+  clause( || I -> Neutral).
+  clause( || K -> H).
+  clause( || P -> NonPolar).
+  clause( || T -> Y).
+  clause( || C -> M).
   clause( || C -> Small).
-  clause( || W -> D).
-  clause( || V -> F).
-  clause( || G -> M).
+  clause( || A -> Q).
+  clause( || I -> Y).
+  clause( || V -> N).
   clause( || R -> V).
-  clause( || F -> NonPolar).
-  clause( || I -> C).
-  clause( || Q -> D).
+  clause( || F -> Hydrophobic).
+  clause( || R -> Positive).
+  clause( || Q -> G).
   clause( || S -> Hydrophilic).
+  clause( || K -> L).
   clause( || G -> Tiny).
-  clause( || E -> Negative).
-  clause( || S -> Polar).
-  clause( || T -> Tiny).
-  clause( || H -> E).
-  clause( || L -> Hydrophobic).
-  clause( || L -> NEWATOMIC18).
-  clause( || NEWATOMIC10 -> NEWATOMIC8).
-  clause( || LargeAliphaticAminoAcid -> NEWATOMIC1).
-  clause( || TinyPolarAminoAcid -> NEWATOMIC14).
-  clause( || Charge -> NEWATOMIC17).
-  clause( || AminoAcid -> NEWATOMIC15).
-  clause( || NEWATOMIC26 -> NEWATOMIC27).
-  clause( || T -> N).
-  clause( || AminoAcid -> NEWATOMIC21).
-  clause( || SideChainStructure -> RefiningFeature).
-  clause( || NEWATOMIC31 -> NEWATOMIC30).
-  clause( || NEWATOMIC12 -> SideChainStructure).
-  clause( || AliphaticAminoAcid -> NEWATOMIC19).
-  clause( || LargeAliphaticAminoAcid -> NEWATOMIC10).
-  clause( || NEWATOMIC2 -> Positive).
-  clause( || NegativeChargedAminoAcid -> NEWATOMIC4).
-  clause( || NEWATOMIC28 -> NEWATOMIC26).
-  clause( || NEWATOMIC25 -> Polarity).
+  clause( || N -> Aliphatic).
+  clause( || W -> L).
+  clause( || D -> M).
+  clause( || S -> Tiny).
   clause( || NEWATOMIC21 -> NEWATOMIC20).
-  clause( || Hydrophobicity -> RefiningFeature).
-  clause( || NEWATOMIC8 -> NEWATOMIC9).
-  clause( || NEWATOMIC3 -> Size).
-  clause( || NEWATOMIC6 -> NEWATOMIC5).
-  clause( || NegativeChargedAminoAcid -> NEWATOMIC23).
-  clause( || NEWATOMIC24 -> Hydrophobicity).
-  clause( || PositiveChargedAminoAcid -> NEWATOMIC2).
-  clause( || NEWATOMIC23 -> NEWATOMIC22).
-  clause( || AromaticAminoAcid -> NEWATOMIC11).
+  clause( || NEWATOMIC4 -> Negative).
+  clause( || AminoAcid -> NEWATOMIC10).
+  clause( || Aromatic -> NEWATOMIC12).
+  clause( || AminoAcid -> NEWATOMIC27).
+  clause( || SideChainStructure -> RefiningFeature).
+  clause( || W -> SpecificAminoAcid).
   clause( || PositiveChargedAminoAcid -> NEWATOMIC6).
   clause( || TinyPolarAminoAcid -> NEWATOMIC13).
+  clause( || LargeAliphaticAminoAcid -> NEWATOMIC0).
+  clause( || NEWATOMIC10 -> NEWATOMIC9).
+  clause( || Negative -> Charge).
+  clause( || NegativeChargedAminoAcid -> NEWATOMIC23).
+  clause( || LargeAliphaticAminoAcid -> NEWATOMIC1).
+  clause( || Charge -> NEWATOMIC17).
+  clause( || NEWATOMIC28 -> NEWATOMIC27).
+  clause( || AliphaticAminoAcid -> NEWATOMIC19).
+  clause( || Hydrophobicity -> RefiningFeature).
+  clause( || NEWATOMIC3 -> Size).
+  clause( || NEWATOMIC31 -> NEWATOMIC30).
+  clause( || NEWATOMIC12 -> SideChainStructure).
   clause( || NEWATOMIC31 -> AromaticAminoAcid).
-  clause( || NEWATOMIC7 -> NEWATOMIC18).
-  clause( || NEWATOMIC32 -> NEWATOMIC1).
-  clause( || NEWATOMIC29 -> NEWATOMIC14).
-  clause( || NEWATOMIC16 -> Charge).
-  clause( || SpecificAminoAcid -> NEWATOMIC17).
-  clause( || NEWATOMIC0 -> NEWATOMIC15).
-  clause( || NEWATOMIC30 -> AliphaticAminoAcid).
-  clause( || AliphaticAminoAcid -> NEWATOMIC4).
-  clause( || NEWATOMIC4 -> NEWATOMIC25).
-  clause( || NEWATOMIC25 -> NEWATOMIC20).
-  clause( || NEWATOMIC20 -> NEWATOMIC3).
-  clause( || NEWATOMIC3 -> NEWATOMIC5).
-  clause( || NEWATOMIC5 -> NEWATOMIC22).
-  clause( || NEWATOMIC22 -> NEWATOMIC13).
-  clause( || NEWATOMIC13 -> NEWATOMIC32).
-  clause( || NEWATOMIC32 -> NEWATOMIC16).
-  clause( || NEWATOMIC16 -> NEWATOMIC0).
+  clause( || AromaticAminoAcid -> NEWATOMIC11).
+  clause( || TinyPolarAminoAcid -> NEWATOMIC14).
+  clause( || PositiveChargedAminoAcid -> NEWATOMIC2).
+  clause( || NEWATOMIC23 -> NEWATOMIC22).
+  clause( || NEWATOMIC24 -> Hydrophobicity).
+  clause( || NEWATOMIC6 -> NEWATOMIC5).
+  clause( || NEWATOMIC25 -> Polarity).
+  clause( || NEWATOMIC8 -> NEWATOMIC9).
+  clause( || AliphaticAminoAcid -> NEWATOMIC21).
+  clause( || NEWATOMIC28 -> NEWATOMIC26).
+  clause( || NegativeChargedAminoAcid -> NEWATOMIC4).
+  clause( || NEWATOMIC7 -> NEWATOMIC20).
+  clause( || NEWATOMIC32 -> SpecificAminoAcid).
+  clause( || NEWATOMIC29 -> NEWATOMIC13).
+  clause( || NEWATOMIC15 -> NEWATOMIC0).
+  clause( || NEWATOMIC16 -> NEWATOMIC1).
+  clause( || NEWATOMIC18 -> NEWATOMIC17).
+  clause( || NEWATOMIC3 -> NEWATOMIC30).
+  clause( || NEWATOMIC30 -> NEWATOMIC14).
+  clause( || NEWATOMIC14 -> NEWATOMIC22).
+  clause( || NEWATOMIC22 -> NEWATOMIC5).
+  clause( || NEWATOMIC5 -> Polarity).
+  clause( || Polarity -> NEWATOMIC26).
+  clause( || NEWATOMIC26 -> NEWATOMIC32).
+  clause( || NEWATOMIC32 -> NEWATOMIC15).
+  clause( || NEWATOMIC15 -> NEWATOMIC18).
 end_of_list. 

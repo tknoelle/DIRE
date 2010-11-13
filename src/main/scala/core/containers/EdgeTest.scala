@@ -1,11 +1,11 @@
 package core.containers
 
-               // für nodes Node anstatt String benutzen und Tupel als Ersatz für die Liste
-class EdgeTest(/*val nodes:List[String], */val nodes: List[Node], /*val nodes: Tupel[Node], */var occurence: Int) extends Ordered[Edge] {
+//praktischer wie eine liste von knoten, wäre ein tupel
+class EdgeTest(val nodes: List[Node], var occurence: Int) extends Ordered[EdgeTest] {
   def getNodes() = nodes
   def getOccurence() = occurence
   def setOccurence(newoc: Int) = occurence = newoc
-  def compare(otherEdge: Edge) = {
+  def compare(otherEdge: EdgeTest) = {
       occurence.compare(otherEdge.occurence)
     }
 }
