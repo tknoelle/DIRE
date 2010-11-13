@@ -131,11 +131,6 @@ class Test extends ClauseStoragePartitioning with Logging{
     }
   }
 
-
-
-  //ab hier muss noch umgeschrieben werden
-
-
   def edgesTest(clause: List[Node]) = {
     var edge = List[Node]()
     var edges = List[EdgeTest]()
