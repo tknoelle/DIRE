@@ -23,8 +23,10 @@ class Partition extends ClauseStoragePartitioning with Logging{
 
     getGraph(module0)
     val g = newGraph()
-    printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
+    setPartitions(6)
+    //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
     printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/output")
+    printPartitions("/home/tk/hiwi/DIRE/input/conf/output")
 
     module0.forall({clause: FOLClause => clause.literals.exists(
       {literal : FOLNode => (literal match {
@@ -252,7 +254,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
         i = i + 1
         j = i + 1
       }
-
+      /*
       println("Number of nodes: "+ nodenum)
       println("Number of inserted edges: "+ x)
       println("Number of edges in the original graph: "+ edges.length)
@@ -285,7 +287,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
         println(tmp.getNodes.head.getName +" "+ tmp.getNodes.tail.head.getName +" occurrence old graph: "+ tmp.getOccurence)
         i = i+1
       }
-      println()
+      println()*/
       newGraph
     }
 
@@ -331,7 +333,22 @@ class Partition extends ClauseStoragePartitioning with Logging{
 
   def setPartitions(number: Int) = {
     var n = nodes
-    n
+    var x = new Array[Int](number)
+    while(!n.isEmpty){
+      var i = 1
+      var partition = 0
+      while(i < number){
+        if(x(partition) >  x(i)){
+           partition = i
+        }
+        i = i + 1
+      }
+      x(partition) = x(partition) + n.head.getWeight
+      n.head.setPartition(partition)
+      println(n.head.getName +" "+ n.head.getWeight + " "+ n.head.getPartition)
+      n = n.tail
+
+    }
   }
 
 
@@ -378,5 +395,23 @@ class Partition extends ClauseStoragePartitioning with Logging{
         } catch { case _ => }
       }
     }
+
+  def printPartitions(file:String){
+    var i = 1
+      var pr = nodes
+      val bufferedWriter = new BufferedWriter(new FileWriter(file+".clu"))
+      try {
+        bufferedWriter.write("*Vertices "+nodes.size +"\n")
+        while(!pr.isEmpty){
+          bufferedWriter.write(pr.head.getPartition +"\n")
+          i = i+1
+          pr = pr.tail
+        }
+      } finally {
+        try {
+        bufferedWriter.close()
+        } catch { case _ => }
+      }
+  }
 
 }
