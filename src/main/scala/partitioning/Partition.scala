@@ -114,13 +114,13 @@ class Partition extends ClauseStoragePartitioning with Logging{
       }
       else{
          if(pos){
-          val node = new Node(name, 1, 1, 0, false, List[Node]())
+          val node = new Node(name, 1, 1, 0, false, List[Node](), 0)
           nodes = nodes ::: List(node)
           hashnodes = hashnodes + (name -> node)
           return node
         }
         else{
-          val node = new Node(name, 1, 0, 1, false, List[Node]())
+          val node = new Node(name, 1, 0, 1, false, List[Node](), 0)
           nodes = nodes ::: List(node)
           hashnodes = hashnodes + (name -> node)
           return node
@@ -327,6 +327,12 @@ class Partition extends ClauseStoragePartitioning with Logging{
       }
       return -1
     }
+
+
+  def setPartitions(number: Int) = {
+    var n = nodes
+    n
+  }
 
 
   //should move to output class
