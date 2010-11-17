@@ -330,6 +330,10 @@ class Partition extends ClauseStoragePartitioning with Logging{
       return -1
     }
 
+  /**
+   * partitions the nodes in number of different partitions
+   * the nodes are always put in the partition with the least weight
+   */
 
   def setPartitions(number: Int) = {
     var n = nodes
@@ -378,6 +382,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
       }
     }
 
+  /**
+   * Prints the nodes with its number
+   */
     def printPredicates(p: List[Node], file:String){
       var i = 1
       var pr = p
@@ -396,6 +403,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
       }
     }
 
+  /**
+   * Prints the Partition of the nodes
+   */
   def printPartitions(file:String){
     var i = 1
       var pr = nodes
