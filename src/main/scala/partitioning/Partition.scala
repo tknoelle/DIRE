@@ -18,12 +18,12 @@ class Partition extends ClauseStoragePartitioning with Logging{
   var hashedges = HashMap[String, Edge]()
 
   override def partition(clauses: ClauseStorage) = {
-    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/aminoacid_clauses.dfg"))
+    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/fma-lite-Idel_clauses.dfg"))
 
 
     getGraph(module0)
     val g = newGraph()
-    setPartitions(6)
+    setPartitions(14)
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
     printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/output")
     printPartitions("/home/tk/hiwi/DIRE/input/conf/output")
