@@ -433,7 +433,6 @@ class Partition extends ClauseStoragePartitioning with Logging{
   def printMetis(file:String){
     var n = nodes
     val bufferedWriter = new BufferedWriter(new FileWriter(file+".graph"))
-    //val bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file+".metis")));
     try {
       bufferedWriter.write(nodes.size +" "+edges.size+" 11")
       bufferedWriter.newLine
