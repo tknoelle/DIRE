@@ -1,9 +1,10 @@
 package core.containers
 
  //con unnötig
-class Node(val name: String, var weight: Int, var pos: Int, var neg: Int, var con: Boolean, var neighbours: List[Node], var partition: Int) extends Ordered[Node]
+class Node(val name: String, var num: Int, var weight: Int, var pos: Int, var neg: Int, var con: Boolean, var neighbours: List[Node], var partition: Int) extends Ordered[Node]
 {
   def getName() = name
+
   def getWeight() = weight
   def getPos() = pos
   def getNeg() = neg
@@ -11,6 +12,7 @@ class Node(val name: String, var weight: Int, var pos: Int, var neg: Int, var co
   def getNeighbours() = neighbours
   def getNumberOfNeighbours() = neighbours.length
   def getPartition() = partition
+
   def setWeight() = {
     if(pos >= neg){
       weight = ((pos + neg)/((pos - neg) + 1))
@@ -28,4 +30,7 @@ class Node(val name: String, var weight: Int, var pos: Int, var neg: Int, var co
   def setNeighbours(newneighbours: List[Node]) = neighbours = newneighbours
   def addNeighbour(newneighbour: Node) = neighbours = neighbours ::: List(newneighbour)
   def setPartition(newp: Int) = partition = newp
+
+  def getNum() = num
+  def setNum(newnum: Int) = num = newnum
 }

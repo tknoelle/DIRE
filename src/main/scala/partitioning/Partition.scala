@@ -27,6 +27,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
     printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/output")
     printPartitions("/home/tk/hiwi/DIRE/input/conf/output")
+    printMetis("/home/tk/hiwi/DIRE/input/conf/output")
 
     module0.forall({clause: FOLClause => clause.literals.exists(
       {literal : FOLNode => (literal match {
@@ -45,8 +46,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
      */
     def getGraph(clauses: CNFClauseStore) = {
       val x = getClauses(clauses)
-      nodes = nodes sort (_ > _)
-      edges = edges sort (_ > _)
+      //nodes = nodes sort (_ > _)
+      //edges = edges sort (_ > _)
+      nodes
     }
 
      def getClauses(clausestore: CNFClauseStore) = {
@@ -116,13 +118,13 @@ class Partition extends ClauseStoragePartitioning with Logging{
       }
       else{
          if(pos){
-          val node = new Node(name, 1, 1, 0, false, List[Node](), 0)
+          val node = new Node(name, nodes.size + 1, 1, 1, 0, false, List[Node](), 0)
           nodes = nodes ::: List(node)
           hashnodes = hashnodes + (name -> node)
           return node
         }
         else{
-          val node = new Node(name, 1, 0, 1, false, List[Node](), 0)
+          val node = new Node(name, nodes.size + 1, 1, 0, 1, false, List[Node](), 0)
           nodes = nodes ::: List(node)
           hashnodes = hashnodes + (name -> node)
           return node
@@ -165,6 +167,8 @@ class Partition extends ClauseStoragePartitioning with Logging{
         edge.setOccurence(edge.getOccurence + 1)
       }
       else{
+        x.addNeighbour(y)
+        y.addNeighbour(x)
         edges = edges ::: List(edge)
         hashedges = hashedges + (n1 -> edge)
       }
@@ -349,7 +353,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
       }
       x(partition) = x(partition) + n.head.getWeight
       n.head.setPartition(partition)
-      println(n.head.getName +" "+ n.head.getWeight + " "+ n.head.getPartition)
+      //println(n.head.getName +" "+ n.head.getWeight + " "+ n.head.getPartition)
       n = n.tail
 
     }
@@ -386,14 +390,13 @@ class Partition extends ClauseStoragePartitioning with Logging{
    * Prints the nodes with its number
    */
     def printPredicates(p: List[Node], file:String){
-      var i = 1
       var pr = p
       val bufferedWriter = new BufferedWriter(new FileWriter(file+".net"))
       try {
         bufferedWriter.write("*Vertices "+p.size +"\n")
         while(!pr.isEmpty){
-          bufferedWriter.write(i+" "+pr.head.getName +"\n")
-          i = i+1
+          bufferedWriter.write(pr.head.getNum+" "+pr.head.getName)
+          bufferedWriter.newLine
           pr = pr.tail
         }
       } finally {
@@ -407,14 +410,14 @@ class Partition extends ClauseStoragePartitioning with Logging{
    * Prints the Partition of the nodes
    */
   def printPartitions(file:String){
-    var i = 1
       var pr = nodes
       val bufferedWriter = new BufferedWriter(new FileWriter(file+".clu"))
       try {
-        bufferedWriter.write("*Vertices "+nodes.size +"\n")
+        bufferedWriter.write("*Vertices "+nodes.size)
+        bufferedWriter.newLine
         while(!pr.isEmpty){
-          bufferedWriter.write(pr.head.getPartition +"\n")
-          i = i+1
+          bufferedWriter.write(pr.head.getPartition+"")
+          bufferedWriter.newLine
           pr = pr.tail
         }
       } finally {
@@ -422,6 +425,45 @@ class Partition extends ClauseStoragePartitioning with Logging{
         bufferedWriter.close()
         } catch { case _ => }
       }
+  }
+
+  /**
+   * Prints the graph in an input format for metis
+   */
+  def printMetis(file:String){
+    var n = nodes
+    val bufferedWriter = new BufferedWriter(new FileWriter(file+".graph"))
+    //val bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file+".metis")));
+    try {
+      bufferedWriter.write(nodes.size +" "+edges.size+" 11")
+      bufferedWriter.newLine
+      while(!n.isEmpty){
+        bufferedWriter.write(" "+n.head.getWeight)
+        var neighbours = n.head.getNeighbours
+        while(!neighbours.isEmpty){
+          bufferedWriter.write(" "+neighbours.head.getNum)
+          val n1 = n.head.getName + neighbours.head.getName
+          val n2 = neighbours.head.getName + n.head.getName
+          if(hashedges.contains(n1)){
+            bufferedWriter.write(" "+hashedges(n1).getOccurence)
+          }
+          else if(hashedges.contains(n2)){
+            bufferedWriter.write(" "+hashedges(n2).getOccurence)
+          }
+          else{
+              bufferedWriter.write(" 0")
+          }
+       
+          neighbours = neighbours.tail
+        }
+        bufferedWriter.newLine
+        n = n.tail
+      }
+    } finally {
+      try {
+      bufferedWriter.close()
+      } catch { case _ => }
+    }
   }
 
 }
