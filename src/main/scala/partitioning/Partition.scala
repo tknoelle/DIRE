@@ -25,9 +25,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
     val g = newGraph()
     setPartitions(14)
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
-    printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/output")
-    printPartitions("/home/tk/hiwi/DIRE/input/conf/output")
-    printMetis("/home/tk/hiwi/DIRE/input/conf/output")
+    printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/einfach")
+    printPartitions("/home/tk/hiwi/DIRE/input/conf/einfach")
+    printMetis("/home/tk/hiwi/DIRE/input/conf/einfach")
 
     module0.forall({clause: FOLClause => clause.literals.exists(
       {literal : FOLNode => (literal match {

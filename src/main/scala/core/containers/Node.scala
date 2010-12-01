@@ -15,14 +15,15 @@ class Node(val name: String, var num: Int, var weight: Int, var pos: Int, var ne
 
 
   def setNum(newnum: Int) = num = newnum
-  def setWeight() = {
+  /*def setWeight() = {
     if(pos >= neg){
       weight = ((pos + neg)/((pos - neg) + 1))
     }
     else{
       weight = ((pos + neg)/((neg - pos) + 1))
     }
-  }
+  }    */
+  def setWeight() = weight = pos + neg
   def setPos(newpos: Int) = pos = newpos
   def setNeg(newneg: Int) = neg = newneg
   def setCon(newcon: Boolean) = con = newcon
