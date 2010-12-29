@@ -20,14 +20,17 @@ class Partition extends ClauseStoragePartitioning with Logging{
   override def partition(clauses: ClauseStorage) = {
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/fma-lite-Idel_clauses.dfg"))
 
+    val out = new Output
+
     val partitions = 14;
     getGraph(module0)
     val g = newGraph()
+    addC(partitions)
     setPartitions(partitions)
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
-    printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/quadrat")
-    printPartitions("/home/tk/hiwi/DIRE/input/conf/quadrat")
-    printMetis("/home/tk/hiwi/DIRE/input/conf/quadrat")
+    out.printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/addc")
+    out.printPartitions(nodes, "/home/tk/hiwi/DIRE/input/conf/addc")
+    out.printMetis(nodes, edges, hashedges, "/home/tk/hiwi/DIRE/input/conf/addc")
 
     module0.forall({clause: FOLClause => clause.literals.exists(
       {literal : FOLNode => (literal match {
@@ -360,7 +363,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
   }
 
   /**
-   *  addC adds a constant (1000) to the n (number of partition) heaviest nodes
+   *  addC adds a constant (100000) to the n (number of partition) heaviest nodes
    */
   def addC(number: Int) = {
     var n = nodes sort (_ > _)
@@ -373,8 +376,8 @@ class Partition extends ClauseStoragePartitioning with Logging{
   }
 
 
-  //should move to output class
-
+  //is now in Output.scala
+   /*
   /**
    *
    *  prints the graph into the file
@@ -478,5 +481,5 @@ class Partition extends ClauseStoragePartitioning with Logging{
       } catch { case _ => }
     }
   }
-
+*/
 }
