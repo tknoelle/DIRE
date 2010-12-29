@@ -23,7 +23,10 @@ class Node(val name: String, var num: Int, var weight: Int, var pos: Int, var ne
       weight = ((pos + neg)/((neg - pos) + 1))
     }
   }    */
+  //def setWeight() = weight = (pos + neg)*(pos+neg)
+  //def setWeight() = weight = pos*neg
   def setWeight() = weight = pos + neg
+  def addC() = weight = weight + 1000
   def setPos(newpos: Int) = pos = newpos
   def setNeg(newneg: Int) = neg = newneg
   def setCon(newcon: Boolean) = con = newcon

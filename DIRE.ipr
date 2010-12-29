@@ -17,6 +17,7 @@
           <option name="SMART_TABS" value="false" />
           <option name="LABEL_INDENT_SIZE" value="0" />
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+          <option name="USE_RELATIVE_INDENTS" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="gsp">
           <option name="INDENT_SIZE" value="2" />
@@ -26,6 +27,7 @@
           <option name="SMART_TABS" value="false" />
           <option name="LABEL_INDENT_SIZE" value="0" />
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+          <option name="USE_RELATIVE_INDENTS" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="java">
           <option name="INDENT_SIZE" value="4" />
@@ -35,6 +37,7 @@
           <option name="SMART_TABS" value="false" />
           <option name="LABEL_INDENT_SIZE" value="0" />
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+          <option name="USE_RELATIVE_INDENTS" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="js">
           <option name="INDENT_SIZE" value="4" />
@@ -44,6 +47,7 @@
           <option name="SMART_TABS" value="false" />
           <option name="LABEL_INDENT_SIZE" value="0" />
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+          <option name="USE_RELATIVE_INDENTS" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="jsp">
           <option name="INDENT_SIZE" value="4" />
@@ -53,6 +57,7 @@
           <option name="SMART_TABS" value="false" />
           <option name="LABEL_INDENT_SIZE" value="0" />
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+          <option name="USE_RELATIVE_INDENTS" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="sql">
           <option name="INDENT_SIZE" value="2" />
@@ -62,6 +67,7 @@
           <option name="SMART_TABS" value="false" />
           <option name="LABEL_INDENT_SIZE" value="0" />
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+          <option name="USE_RELATIVE_INDENTS" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="xml">
           <option name="INDENT_SIZE" value="4" />
@@ -71,6 +77,7 @@
           <option name="SMART_TABS" value="false" />
           <option name="LABEL_INDENT_SIZE" value="0" />
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+          <option name="USE_RELATIVE_INDENTS" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
       </value>
     </option>
@@ -121,6 +128,9 @@
   </component>
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
     <file url="file://$PROJECT_DIR$/src/main/scala/core/index/SubstitutionIndexTree.scala" charset="x-MacRoman" />
+  </component>
+  <component name="EntryPointsManager">
+    <entry_points version="2.0" />
   </component>
   <component name="FacetAutodetectingManager">
     <autodetection-disabled>
@@ -471,6 +481,44 @@
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="libraryTable">
+    <library name="akka">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/../akka" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/../akka" recursive="false" />
+    </library>
+    <library name="Akka Core">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/../akka/akka-core/target/scala_2.7.7" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="file://$PROJECT_DIR$/../akka/akka-core/src" />
+      </SOURCES>
+      <jarDirectory url="file://$PROJECT_DIR$/../akka/akka-core/target/scala_2.7.7" recursive="false" />
+    </library>
+    <library name="AKKA JGroups Cluster">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/../akka/akka-cluster/akka-cluster-jgroups/target/scala_2.7.7" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="file://$PROJECT_DIR$/../akka/akka-cluster/akka-cluster-jgroups/src" />
+      </SOURCES>
+      <jarDirectory url="file://$PROJECT_DIR$/../akka/akka-cluster/akka-cluster-jgroups/target/scala_2.7.7" recursive="false" />
+    </library>
+    <library name="AKKA Util">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/../akka/akka-util/target/scala_2.7.7" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="file://$PROJECT_DIR$/../akka/akka-util/src" />
+      </SOURCES>
+      <jarDirectory url="file://$PROJECT_DIR$/../akka/akka-util/target/scala_2.7.7" recursive="false" />
+    </library>
     <library name="Maven: org.multiverse:multiverse-alpha:jar-with-dependencies:0.3">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/multiverse/multiverse-alpha/0.3/multiverse-alpha-0.3-jar-with-dependencies.jar!/" />
@@ -638,44 +686,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/multiverse/multiverse-alpha/0.3/multiverse-alpha-0.3-jar-with-dependencies-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="akka">
-      <CLASSES>
-        <root url="file://$PROJECT_DIR$/../akka" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-      <jarDirectory url="file://$PROJECT_DIR$/../akka" recursive="false" />
-    </library>
-    <library name="Akka Core">
-      <CLASSES>
-        <root url="file://$PROJECT_DIR$/../akka/akka-core/target/scala_2.7.7" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES>
-        <root url="file://$PROJECT_DIR$/../akka/akka-core/src" />
-      </SOURCES>
-      <jarDirectory url="file://$PROJECT_DIR$/../akka/akka-core/target/scala_2.7.7" recursive="false" />
-    </library>
-    <library name="AKKA JGroups Cluster">
-      <CLASSES>
-        <root url="file://$PROJECT_DIR$/../akka/akka-cluster/akka-cluster-jgroups/target/scala_2.7.7" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES>
-        <root url="file://$PROJECT_DIR$/../akka/akka-cluster/akka-cluster-jgroups/src" />
-      </SOURCES>
-      <jarDirectory url="file://$PROJECT_DIR$/../akka/akka-cluster/akka-cluster-jgroups/target/scala_2.7.7" recursive="false" />
-    </library>
-    <library name="AKKA Util">
-      <CLASSES>
-        <root url="file://$PROJECT_DIR$/../akka/akka-util/target/scala_2.7.7" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES>
-        <root url="file://$PROJECT_DIR$/../akka/akka-util/src" />
-      </SOURCES>
-      <jarDirectory url="file://$PROJECT_DIR$/../akka/akka-util/target/scala_2.7.7" recursive="false" />
-    </library>
     <library name="Maven: se.scalablesolutions.akka:akka-core_2.7.7:0.7">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/se/scalablesolutions/akka/akka-core_2.7.7/0.7/akka-core_2.7.7-0.7.jar!/" />
@@ -701,6 +711,32 @@
         <root url="jar://$MAVEN_REPOSITORY$/se/scalablesolutions/akka/akka-core_2.7.7/0.7-nowafork-SNAPSHOT/akka-core_2.7.7-0.7-nowafork-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="SBTAutoDeps">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/lib_managed/scala_2.7.7" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/lib_managed/scala_2.7.7" recursive="false" />
+    </library>
+    <library name="SBTDeps">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/lib_managed/scala_2.7.7/compile" />
+        <root url="file://$PROJECT_DIR$/lib_managed/scala_2.7.7/test" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/lib_managed/scala_2.7.7/compile" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/lib_managed/scala_2.7.7/test" recursive="false" />
+    </library>
+    <library name="SBTManualDeps">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/lib" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
+    </library>
     <library name="scromium">
       <CLASSES>
         <root url="file://$PROJECT_DIR$/../scromium/target/scala_2.8.0.Beta1" />
@@ -716,32 +752,6 @@
       <JAVADOC />
       <SOURCES />
       <jarDirectory url="file://$PROJECT_DIR$/../voldemort-0.80.2/dist" recursive="false" />
-    </library>
-    <library name="SBTDeps">
-      <CLASSES>
-        <root url="file://$PROJECT_DIR$/lib_managed/scala_2.7.7/compile" />
-        <root url="file://$PROJECT_DIR$/lib_managed/scala_2.7.7/test" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-      <jarDirectory url="file://$PROJECT_DIR$/lib_managed/scala_2.7.7/compile" recursive="false" />
-      <jarDirectory url="file://$PROJECT_DIR$/lib_managed/scala_2.7.7/test" recursive="false" />
-    </library>
-    <library name="SBTAutoDeps">
-      <CLASSES>
-        <root url="file://$PROJECT_DIR$/lib_managed/scala_2.7.7" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-      <jarDirectory url="file://$PROJECT_DIR$/lib_managed/scala_2.7.7" recursive="false" />
-    </library>
-    <library name="SBTManualDeps">
-      <CLASSES>
-        <root url="file://$PROJECT_DIR$/lib" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-      <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
     </library>
   </component>
 </project>

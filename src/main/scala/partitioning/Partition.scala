@@ -20,14 +20,14 @@ class Partition extends ClauseStoragePartitioning with Logging{
   override def partition(clauses: ClauseStorage) = {
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/fma-lite-Idel_clauses.dfg"))
 
-
+    val partitions = 14;
     getGraph(module0)
     val g = newGraph()
-    setPartitions(14)
+    setPartitions(partitions)
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
-    printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/einfach")
-    printPartitions("/home/tk/hiwi/DIRE/input/conf/einfach")
-    printMetis("/home/tk/hiwi/DIRE/input/conf/einfach")
+    printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/quadrat")
+    printPartitions("/home/tk/hiwi/DIRE/input/conf/quadrat")
+    printMetis("/home/tk/hiwi/DIRE/input/conf/quadrat")
 
     module0.forall({clause: FOLClause => clause.literals.exists(
       {literal : FOLNode => (literal match {
@@ -359,12 +359,26 @@ class Partition extends ClauseStoragePartitioning with Logging{
     }
   }
 
+  /**
+   *  addC adds a constant (1000) to the n (number of partition) heaviest nodes
+   */
+  def addC(number: Int) = {
+    var n = nodes sort (_ > _)
+    var i = number
+    while(i > 0){
+      n.head.addC
+      n = n.tail
+      i = i - 1
+    }
+  }
+
 
   //should move to output class
 
-    /**
-     * prints the graph into the file
-     */
+  /**
+   *
+   *  prints the graph into the file
+   */
     def printGraph(g: List[Edge], file: String) = {
       var i = 0
       val bufferedWriter = new BufferedWriter(new FileWriter(file+".dire"))
