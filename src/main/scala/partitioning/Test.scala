@@ -1,7 +1,7 @@
 package partitioning
 
 import core.containers.{CNFClauseStore, ClauseStorage, Node, EdgeTest}
-import domain.fol.ast.{NegativeFOLLiteral, PositiveFOLLiteral, FOLNode, FOLClause}
+import domain.fol.ast.{NegativeFOLLiteral, PositiveFOLLiteral, FOLNode, FOLClause, Predicate}
 import domain.fol.parsers.SPASSIntermediateFormatParser
 import scala.collection.immutable.{HashMap}
 import helpers.Logging
@@ -37,16 +37,16 @@ class Test extends ClauseStoragePartitioning with Logging{
 
   def test(clauses: CNFClauseStore) = {
     val x = getClauses(clauses)
-    println("Kantenanzahl: "+edges.size)
-    println("Knotenanzahl: "+nodes.size)
-    var tmp = nodes sort (_ > _)
-    nodes = nodes sort (_ > _)
-    edges = edges sort (_ > _)
-    while(!tmp.isEmpty){
-      println(tmp.head.getName+" "+ tmp.head.getWeight+" "+tmp.head.getPos+ " "+ tmp.head.getNeg)
-      tmp = tmp.tail
-    }
-    newGraph
+    //println("Kantenanzahl: "+edges.size)
+    //println("Knotenanzahl: "+nodes.size)
+    //var tmp = nodes sort (_ > _)
+    //nodes = nodes sort (_ > _)
+    //edges = edges sort (_ > _)
+    //while(!tmp.isEmpty){
+    //  println(tmp.head.getName+" "+ tmp.head.getWeight+" "+tmp.head.getPos+ " "+ tmp.head.getNeg)
+    //  tmp = tmp.tail
+    //}
+    //newGraph
     x
   }
 
@@ -56,10 +56,30 @@ class Test extends ClauseStoragePartitioning with Logging{
      var edges = List[EdgeTest]()
      while(!c.isEmpty){
        var clause = List[String]()
-       var tmp = c.head.positiveLiterals.toArray
-       var size = tmp.size
        var i = 0
+       var n = c.head.absoluteLiterals.toArray
+       var size = n.size
+
        while(i < size){
+         println(n(i).args.size)
+         /*var x = n(i).args
+         while(!x.isEmpty){
+           println(x.head)
+           x = x.tail
+         }  */
+         //clause = clause ::: List(tmp(i).toString)
+         i = i + 1
+       }
+       var tmp = c.head.positiveLiterals.toArray
+       size = tmp.size
+
+       while(i < size){
+         //println(tmp(i).top)
+         var x = tmp(i).args
+         //while(!x.isEmpty){
+         //  println(x.head)
+         //  x = x.tail
+         //}
          clause = clause ::: List(tmp(i).toString)
          i = i + 1
        }
@@ -67,13 +87,14 @@ class Test extends ClauseStoragePartitioning with Logging{
        size = tmp.size
        i = 0
        while(i < size){
+         //println(tmp(i).top)
          clause = clause ::: List(tmp(i).toString)
          i = i + 1
        }
        var x = getPredicateOccurence(clause)
        //clauses = clauses ::: List(x)
        //edges = edges ::: getEdges(x)
-       edgesTest(x)
+       //edgesTest(x)
        c = c.tail
 
      }
@@ -82,7 +103,13 @@ class Test extends ClauseStoragePartitioning with Logging{
    }
 
    def getPredicateOccurence(literals: List[String]): List[Node] = {
-     val posregex = """(\w+)\(?.*""".r
+     var clause = List[Node]()
+     var l = literals
+     while(!l.isEmpty){
+       //println(l.head.Predicate)
+       l = l.tail
+     }
+     /*val posregex = """(\w+)\(?.*""".r
      val negregex = """¬\((\w+)\(?.*""".r
      var l = literals
      var clause = List[Node]()
@@ -93,7 +120,7 @@ class Test extends ClauseStoragePartitioning with Logging{
         case _ => println("kein Match: "+ l.head)
         }
         l = l.tail  
-    }
+    }  */
     clause
   }
 

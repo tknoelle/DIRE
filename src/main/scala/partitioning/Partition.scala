@@ -18,19 +18,20 @@ class Partition extends ClauseStoragePartitioning with Logging{
   var hashedges = HashMap[String, Edge]()
 
   override def partition(clauses: ClauseStorage) = {
-    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/aminoacid_clauses.dfg"))
+    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/fma-lite-Idel_clauses.dfg"))
 
     val out = new Output
 
     val partitions = 14;
     getGraph(module0)
     val g = newGraph()
-    addC(partitions)
+    //addC(partitions)
     setPartitions(partitions)
+    var n = nodes sort (_ > _)
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
-    out.printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/test")
-    out.printPartitions(nodes, "/home/tk/hiwi/DIRE/input/conf/test")
-    out.printMetis(nodes, edges, hashedges, "/home/tk/hiwi/DIRE/input/conf/test")
+    out.printPredicates(n, "/home/tk/hiwi/DIRE/input/conf/produkt")
+    out.printPartitions(n, "/home/tk/hiwi/DIRE/input/conf/produkt")
+    out.printMetis(n, edges, hashedges, "/home/tk/hiwi/DIRE/input/conf/produkt")
 
     module0.forall({clause: FOLClause => clause.literals.exists(
       {literal : FOLNode => (literal match {
@@ -64,14 +65,14 @@ class Partition extends ClauseStoragePartitioning with Logging{
          var size = tmp.size
          var i = 0
          while(i < size){
-           clause = clause ::: List(tmp(i).toString)
+           clause = clause ::: List(tmp(i).top)
            i = i + 1
          }
          tmp = c.head.negativeLiterals.toArray
          size = tmp.size
          i = 0
          while(i < size){
-           clause = clause ::: List(tmp(i).toString)
+           clause = clause ::: List(tmp(i).top)
            i = i + 1
          }
          var x = getPredicateOccurence(clause)
@@ -86,8 +87,8 @@ class Partition extends ClauseStoragePartitioning with Logging{
      }
 
      def getPredicateOccurence(literals: List[String]): List[Node] = {
-       val posregex = """(\w+)\(?.*""".r
-       val negregex = """¬\((\w+)\(?.*""".r
+       val posregex = """(\w+)""".r
+       val negregex = """-(\w+)""".r
        var l = literals
        var clause = List[Node]()
        while(!l.isEmpty){
@@ -343,7 +344,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
    */
 
   def setPartitions(number: Int) = {
-    var n = nodes
+    var n = nodes sort (_ > _)
     var x = new Array[Int](number)
     while(!n.isEmpty){
       var i = 1
