@@ -26,14 +26,20 @@ class Partition extends ClauseStoragePartitioning with Logging{
     getGraph(module0)
     val g = newGraph()
     //addC(partitions)
+    hashnodes("partof").setCustomWeight(34715)
+    println(hashnodes("partof").getWeight)
+    var n = nodes sort (_ > _)
+    println(n.head.getName)
+    println(n.head.getWeight)
     setPartitions(partitions)
 
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
     //out.printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/nodes")
-    out.printPartitions(nodes, "/home/tk/hiwi/DIRE/input/conf/einfach")
-    out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach")
-    addC(partitions)
-    out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach_addC")
+
+    out.printPartitions(nodes, "/home/tk/hiwi/DIRE/input/conf/produkt_pimp")
+    out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/produkt_pimp")
+    //addC(partitions)
+    //out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach_addC")
 
     module0.forall({clause: FOLClause => clause.literals.exists(
       {literal : FOLNode => (literal match {
