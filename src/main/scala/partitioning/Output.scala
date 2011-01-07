@@ -75,11 +75,11 @@ class Output {
   /**
    * Prints the graph in an input format for metis
    */
-  def printMetis(nodes: List[Node], edges:  List[Edge], hashedges:Map[String, Edge], file:String){
+  def printMetis(nodes: List[Node], hashedges:Map[String, Edge], file:String){
     var n = nodes
     val bufferedWriter = new BufferedWriter(new FileWriter(file+".graph"))
     try {
-      bufferedWriter.write(nodes.size +" "+edges.size+" 11")
+      bufferedWriter.write(nodes.size +" "+hashedges.size+" 11")
       bufferedWriter.newLine
       while(!n.isEmpty){
         bufferedWriter.write(" "+n.head.getWeight)

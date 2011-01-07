@@ -12,7 +12,7 @@ import java.io._
 class Partition extends ClauseStoragePartitioning with Logging{
 
   val parser = SPASSIntermediateFormatParser
-  var nodes = List[Node]()   // die liste könnte man durch hashnodes.value ersetzen, hashnodes.value liefert einen iterator mit allen knoten
+  var nodes = List[Node]()
   var hashnodes = HashMap[String, Node]()
   var edges = List[Edge]()
   var hashedges = HashMap[String, Edge]()
@@ -27,11 +27,13 @@ class Partition extends ClauseStoragePartitioning with Logging{
     val g = newGraph()
     //addC(partitions)
     setPartitions(partitions)
-    var n = nodes sort (_ > _)
+
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
-    out.printPredicates(n, "/home/tk/hiwi/DIRE/input/conf/produkt")
-    out.printPartitions(n, "/home/tk/hiwi/DIRE/input/conf/produkt")
-    out.printMetis(n, edges, hashedges, "/home/tk/hiwi/DIRE/input/conf/produkt")
+    //out.printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/nodes")
+    out.printPartitions(nodes, "/home/tk/hiwi/DIRE/input/conf/einfach")
+    out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach")
+    addC(partitions)
+    out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach_addC")
 
     module0.forall({clause: FOLClause => clause.literals.exists(
       {literal : FOLNode => (literal match {
@@ -364,7 +366,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
   }
 
   /**
-   *  addC adds a constant (100000) to the n (number of partition) heaviest nodes
+   *  addC adds a constant (10000) to the n (number of partition) heaviest nodes
    */
   def addC(number: Int) = {
     var n = nodes sort (_ > _)
