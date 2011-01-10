@@ -18,7 +18,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
   var hashedges = HashMap[String, Edge]()
 
   override def partition(clauses: ClauseStorage) = {
-    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/fma-lite-Idel_clauses.dfg"))
+    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("/home/tk/hiwi/DIRE/input/conf/aminoacid_clauses.dfg"))
 
     val out = new Output
 
@@ -26,18 +26,15 @@ class Partition extends ClauseStoragePartitioning with Logging{
     getGraph(module0)
     val g = newGraph()
     //addC(partitions)
-    hashnodes("partof").setCustomWeight(34715)
-    println(hashnodes("partof").getWeight)
-    var n = nodes sort (_ > _)
-    println(n.head.getName)
-    println(n.head.getWeight)
+    //hashnodes("partof").setCustomWeight(34715)
+
     setPartitions(partitions)
 
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
-    //out.printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/nodes")
+    out.printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/test")
 
-    out.printPartitions(nodes, "/home/tk/hiwi/DIRE/input/conf/produkt_pimp")
-    out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/produkt_pimp")
+    out.printPartitions(nodes, "/home/tk/hiwi/DIRE/input/conf/test")
+    out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/test")
     //addC(partitions)
     //out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach_addC")
 
@@ -50,6 +47,36 @@ class Partition extends ClauseStoragePartitioning with Logging{
     List(
       CNFClauseStore(module0)
       )
+  }
+
+  def nw(path: String, partitions: Int, output: String) = {
+    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
+    val out = new Output
+    getGraph(module0)
+    setPartitions(partitions)
+    out.printPredicates(nodes, "output/"+ output)
+    out.printPartitions(nodes, "output/"+ output)
+  }
+
+  def metis(path: String, output: String) = {
+    val out = new Output
+    if(nodes.isEmpty){
+      val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
+      getGraph(module0)
+      out.printPredicates(nodes, "output/"+ output)
+    }
+    out.printMetis(nodes, hashedges, "output/"+ output)
+  }
+
+  def metisaddC(path: String, partitions: Int, output: String) = {
+    val out = new Output
+    if(nodes.isEmpty){
+      val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
+      getGraph(module0)
+      out.printPredicates(nodes, "output/"+ output)
+    }
+    addC(partitions)
+    out.printMetis(nodes, hashedges, "output/"+ output +"_addC")
   }
 
 

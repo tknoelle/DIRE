@@ -26,6 +26,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException
 import Helpers._
 //import se.scalablesolutions.akka.actor.Actor.Sender.Self
 import se.scalablesolutions.akka.stm.Transaction._
+import java.io.{BufferedReader, InputStreamReader}
 
 
 
@@ -496,6 +497,14 @@ object DIREShell extends Application with Actor {
   }
 
 def partition: List[Actor] = {
+    var in = new BufferedReader( new InputStreamReader( System.in ))
+    println("Please declare the path to your clausefile:")
+    var path = in.readLine
+    println("Choose the method of partitioning, 1 for NW, 2 for metis, 3 for metis with addC. You can combine them, for example 12 for NW and metis")
+    var method = in.readLine
+    println("Your output filename:")
+    var out = in.readLine
+
     // spawn remote reasoners
 
     // echeck if there are enought conpute nodes in the cluster
@@ -508,12 +517,30 @@ def partition: List[Actor] = {
 
     // partition the ontology
     val partitioner = new Partition
-    val partitions = partitioner.partition(CNFClauseStore()) // pass dummy empty store
+  var partitions = 0
+    //val partitions = partitioner.partition(CNFClauseStore())
+    if(method.contains("1")){
+      println("How many partitions do you want:")
+      partitions =  in.readLine.toInt
+      partitioner.nw(path, partitions, out)
+    }
+    if(method.contains("2")){
+      partitioner.metis(path, out)
+    }
+    if(method.contains("3")){
+      if(!method.contains("1")){
+         println("How many partitions do you want:")
+         partitions =  in.readLine.toInt
+      }
+      partitioner.metisaddC(path, partitions, out)
+    }
+     // pass dummy empty store
 
   rs
   }
 
-  def paritiontest: List[Actor] = {
+
+  def partitiontest: List[Actor] = {
     // spawn remote reasoners
 
     // echeck if there are enought conpute nodes in the cluster
