@@ -272,6 +272,7 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
         }
         case e: NoSuccess => {
           Console.err.println(e)
+          println(e)
           None
         }
       }

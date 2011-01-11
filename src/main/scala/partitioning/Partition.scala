@@ -16,9 +16,11 @@ class Partition extends ClauseStoragePartitioning with Logging{
   var hashnodes = HashMap[String, Node]()
   var edges = List[Edge]()
   var hashedges = HashMap[String, Edge]()
+  var functions = List[Node]()
+  var hashfunctions = HashMap[String, Node]()
 
   override def partition(clauses: ClauseStorage) = {
-    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("/home/tk/hiwi/DIRE/input/conf/aminoacid_clauses.dfg"))
+    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/sumo.dfg"))
 
     val out = new Output
 
@@ -31,10 +33,11 @@ class Partition extends ClauseStoragePartitioning with Logging{
     setPartitions(partitions)
 
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
-    out.printPredicates(nodes, "/home/tk/hiwi/DIRE/input/conf/test")
+    out.printPredicates(nodes, "output/sumo")
 
-    out.printPartitions(nodes, "/home/tk/hiwi/DIRE/input/conf/test")
-    out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/test")
+    out.printPartitions(nodes, "output/sumo")
+    out.printMetis(nodes, hashedges, "output/sumo")
+    out.printFunctions(functions, "output/sumo")
     //addC(partitions)
     //out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach_addC")
 
@@ -96,21 +99,37 @@ class Partition extends ClauseStoragePartitioning with Logging{
        var edges = List[Edge]()
        while(!c.isEmpty){
          var clause = List[String]()
-         var tmp = c.head.positiveLiterals.toArray
-         var size = tmp.size
+         var clausefunctions = List[String]()
+         var tmp = c.head.absoluteLiterals.toArray
+         var size= tmp.size
          var i = 0
          while(i < size){
-           clause = clause ::: List(tmp(i).top)
+           //clause = clause ::: List(tmp(i).top)     //use this instead of positive and negative, if positive or negative doesn't matter
+           var f = tmp(i).args
+           while(!f.isEmpty){
+             clausefunctions = clausefunctions ::: List(f.head.top)
+             f = f.tail
+           }
            i = i + 1
          }
-         tmp = c.head.negativeLiterals.toArray
+         tmp = c.head.positiveLiterals.toArray
          size = tmp.size
          i = 0
          while(i < size){
            clause = clause ::: List(tmp(i).top)
            i = i + 1
          }
+
+         tmp = c.head.negativeLiterals.toArray
+         size = tmp.size
+         i = 0
+         while(i < size){
+           clause = clause ::: List(tmp(i).top)
+
+           i = i + 1
+         }
          var x = getPredicateOccurence(clause)
+         getFunctionOccurence(clausefunctions)
          //clauses = clauses ::: List(x)
          //edges = edges ::: getEdges(x)
          edgesTest(x)
@@ -120,6 +139,24 @@ class Partition extends ClauseStoragePartitioning with Logging{
        //clauses
        //edges
      }
+
+  def getFunctionOccurence(clausefunctions: List[String]) = {
+    var f = clausefunctions
+    while(!f.isEmpty){
+      if(hashfunctions.contains(f.head)){
+          var node = hashfunctions(f.head)
+          node.setPos(node.getPos+1)
+          node.setWeight
+      }
+      else{
+          val function = new Node(f.head, functions.size + 1, 1, 1, 0, false, List[Node](), 0)
+          functions = functions ::: List(function)
+          hashfunctions = hashfunctions + (f.head -> function)
+      }
+      f = f.tail
+    }
+
+  }
 
      def getPredicateOccurence(literals: List[String]): List[Node] = {
        val posregex = """(\w+)""".r
