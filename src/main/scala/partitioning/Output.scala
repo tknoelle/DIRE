@@ -113,13 +113,13 @@ class Output {
   /**
    * Prints all functions with frequency
    */
-  def printFunctions(functions: List[Node], file: String){
-     var f = functions
-      val bufferedWriter = new BufferedWriter(new FileWriter(file+".functions"))
+  def printPrecedence(pre: List[Node], file: String){
+     var f = pre
+      val bufferedWriter = new BufferedWriter(new FileWriter(file+".precedence"))
       try {
-        //bufferedWriter.write("*Vertices "+p.size +"\n")
+        //bufferedWriter.write("*Vertices "+f.size +"\n")
         while(!f.isEmpty){
-          bufferedWriter.write(f.head.getNum+" "+f.head.getName+" "+ f.head.getWeight)
+          bufferedWriter.write(f.head.getName+" "+ f.head.getWeight)
           bufferedWriter.newLine
           f = f.tail
         }

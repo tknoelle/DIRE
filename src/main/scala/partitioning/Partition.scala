@@ -18,9 +18,11 @@ class Partition extends ClauseStoragePartitioning with Logging{
   var hashedges = HashMap[String, Edge]()
   var functions = List[Node]()
   var hashfunctions = HashMap[String, Node]()
+  var constants = List[Node]()
+  var hashconstants = HashMap[String, Node]()
 
   override def partition(clauses: ClauseStorage) = {
-    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/sumo.dfg"))
+    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/SWEET.dfg"))
 
     val out = new Output
 
@@ -29,15 +31,14 @@ class Partition extends ClauseStoragePartitioning with Logging{
     val g = newGraph()
     //addC(partitions)
     //hashnodes("partof").setCustomWeight(34715)
-
     setPartitions(partitions)
 
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
-    out.printPredicates(nodes, "output/sumo")
-
-    out.printPartitions(nodes, "output/sumo")
-    out.printMetis(nodes, hashedges, "output/sumo")
-    out.printFunctions(functions, "output/sumo")
+    out.printPredicates(nodes, "output/SWEET")
+    val precedence = setPrecedence
+    out.printPartitions(nodes, "output/SWEET")
+    out.printMetis(nodes, hashedges, "output/SWEET")
+    out.printPrecedence(precedence, "output/SWEET")
     //addC(partitions)
     //out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach_addC")
 
@@ -55,7 +56,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
   def nw(path: String, partitions: Int, output: String) = {
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
     val out = new Output
-    getGraph(module0)
+    getClauses(module0)
     setPartitions(partitions)
     out.printPredicates(nodes, "output/"+ output)
     out.printPartitions(nodes, "output/"+ output)
@@ -65,7 +66,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
     val out = new Output
     if(nodes.isEmpty){
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
-      getGraph(module0)
+      getClauses(module0)
       out.printPredicates(nodes, "output/"+ output)
     }
     out.printMetis(nodes, hashedges, "output/"+ output)
@@ -75,7 +76,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
     val out = new Output
     if(nodes.isEmpty){
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
-      getGraph(module0)
+      getClauses(module0)
       out.printPredicates(nodes, "output/"+ output)
     }
     addC(partitions)
@@ -100,6 +101,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
        while(!c.isEmpty){
          var clause = List[String]()
          var clausefunctions = List[String]()
+         var clauseconstants = List[String]()
          var tmp = c.head.absoluteLiterals.toArray
          var size= tmp.size
          var i = 0
@@ -107,7 +109,12 @@ class Partition extends ClauseStoragePartitioning with Logging{
            //clause = clause ::: List(tmp(i).top)     //use this instead of positive and negative, if positive or negative doesn't matter
            var f = tmp(i).args
            while(!f.isEmpty){
-             clausefunctions = clausefunctions ::: List(f.head.top)
+             if( f.head != f.head.args.head){
+               clausefunctions = clausefunctions ::: List(f.head.top)
+             }
+             else{
+               clauseconstants = clauseconstants ::: List(f.head.top)
+             }
              f = f.tail
            }
            i = i + 1
@@ -130,6 +137,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
          }
          var x = getPredicateOccurence(clause)
          getFunctionOccurence(clausefunctions)
+         getConstantOccurence(clauseconstants)
          //clauses = clauses ::: List(x)
          //edges = edges ::: getEdges(x)
          edgesTest(x)
@@ -154,6 +162,24 @@ class Partition extends ClauseStoragePartitioning with Logging{
           hashfunctions = hashfunctions + (f.head -> function)
       }
       f = f.tail
+    }
+
+  }
+
+  def getConstantOccurence(clauseconstants: List[String]) = {
+    var c = clauseconstants
+    while(!c.isEmpty){
+      if(hashconstants.contains(c.head)){
+          var node = hashconstants(c.head)
+          node.setPos(node.getPos+1)
+          node.setWeight
+      }
+      else{
+          val constant = new Node(c.head, constants.size + 1, 1, 1, 0, false, List[Node](), 0)
+          constants = constants ::: List(constant)
+          hashconstants = hashconstants + (c.head -> constant)
+      }
+      c = c.tail
     }
 
   }
@@ -446,6 +472,18 @@ class Partition extends ClauseStoragePartitioning with Logging{
       n = n.tail
       i = i - 1
     }
+  }
+
+
+  def setPrecedence() = {
+    var p = nodes sort (_ < _)
+    var c = constants sort (_ < _)
+    var f = functions sort (_ < _)
+    var precedence = List[Node]()
+    precedence = precedence ::: c
+    precedence = precedence ::: f
+    precedence = precedence ::: p
+    precedence
   }
 
 
