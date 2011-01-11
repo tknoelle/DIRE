@@ -22,7 +22,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
   var hashconstants = HashMap[String, Node]()
 
   override def partition(clauses: ClauseStorage) = {
-    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/SWEET.dfg"))
+    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/sumo.dfg"))
 
     val out = new Output
 
@@ -34,11 +34,11 @@ class Partition extends ClauseStoragePartitioning with Logging{
     setPartitions(partitions)
 
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
-    out.printPredicates(nodes, "output/SWEET")
+    out.printPredicates(nodes, "output/sumo")
     val precedence = setPrecedence
-    out.printPartitions(nodes, "output/SWEET")
-    out.printMetis(nodes, hashedges, "output/SWEET")
-    out.printPrecedence(precedence, "output/SWEET")
+    out.printPartitions(nodes, "output/sumo")
+    out.printMetis(nodes, hashedges, "output/sumo")
+    //out.printPrecedence(precedence, "output/sumo")
     //addC(partitions)
     //out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach_addC")
 
