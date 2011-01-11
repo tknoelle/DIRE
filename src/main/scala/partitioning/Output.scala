@@ -117,12 +117,15 @@ class Output {
      var f = pre
       val bufferedWriter = new BufferedWriter(new FileWriter(file+".precedence"))
       try {
-        //bufferedWriter.write("*Vertices "+f.size +"\n")
+        bufferedWriter.write("set_precedence(")
+        bufferedWriter.write(f.head.getName)
+        f = f.tail
         while(!f.isEmpty){
-          bufferedWriter.write(f.head.getName+" "+ f.head.getWeight)
-          bufferedWriter.newLine
+          bufferedWriter.write(","+f.head.getName)
+          //bufferedWriter.newLine
           f = f.tail
         }
+        bufferedWriter.write(")")
       } finally {
         try {
         bufferedWriter.close()
