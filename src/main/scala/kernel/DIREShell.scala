@@ -558,7 +558,7 @@ def partition: List[Actor] = {
   rs
   }
 
-  def test: List[Actor] = {
+  def test = {
     // spawn remote reasoners
 
     // echeck if there are enought conpute nodes in the cluster
@@ -567,14 +567,13 @@ def partition: List[Actor] = {
     val ns = rs.map(_.uuid)
 
 
-    //val reasoner2address: Map[Actor, String] = (rs zip rs.map(_.uuid)).foldLeft(Map[Actor, String]())(_ + _)
+    val reasoner2address: Map[Actor, String] = (rs zip rs.map(_.uuid)).foldLeft(Map[Actor, String]())(_ + _)
 
     // partition the ontology
     val partitioner = new Test
     val partitions = partitioner.partition(CNFClauseStore()) // pass dummy empty store
 
   rs
-
   }
 
 

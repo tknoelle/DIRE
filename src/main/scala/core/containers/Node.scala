@@ -15,7 +15,7 @@ class Node(val name: String, var num: Int, var weight: Int, var pos: Int, var ne
 
 
   def setNum(newnum: Int) = num = newnum
-  def setWeight() = weight = pos + neg
+  def setWeight() = weight = pos + neg //ACHTUNG Wenn dies geändert wird, dann wird Precedence falsch
   def setCustomWeight(w: Int) = weight = w
   def addC() = weight = weight + 10000
   def einfach() = weight = pos + neg

@@ -7,10 +7,10 @@ import java.io.File
 import scala.util.parsing.combinator.syntactical._
 
 /**
- * User: nowi
- * Date: 27.11.2009
- * Time: 17:59:38
- */
+* User: nowi
+* Date: 27.11.2009
+* Time: 17:59:38
+*/
 object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
   lexical.delimiters ++= List("(", ")", ").", "[", "]", ".", ". ", ",", ", ", ";", "{", "}", "->", "+")
   lexical.reserved += ("", "exists", "forall", "and", "or", "not", "implies", "implied", "equiv", "clause", "cnf",
@@ -48,22 +48,22 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
 
   def symbollist = "listofsymbols" ~ ". " ~ opt(functions ~ ". ") ~ opt(predicates ~ ". ") ~ "endoflist" ~ ". "
 
-  //  def declarationlist = "listofdeclarations." ~ rep(declaration) ~ "endoflist"
+  // def declarationlist = "listofdeclarations." ~ rep(declaration) ~ "endoflist"
   def declarationlist = "listofdeclarations." ~ "endoflist"
 
-  //  def declaration = subsortdec1 | termdec1 | preddec1 | gendec1
+  // def declaration = subsortdec1 | termdec1 | preddec1 | gendec1
   //
-  //  def gendec1 = "sort" ~ sortsym ~ opt("freely") ~ "generatedby" ~ funclist ~ "."
+  // def gendec1 = "sort" ~ sortsym ~ opt("freely") ~ "generatedby" ~ funclist ~ "."
   //
-  //  def funclist = "[" ~ repsep(funsym, ",") ~ "]."
+  // def funclist = "[" ~ repsep(funsym, ",") ~ "]."
   //
-  //  def subsortdec1 = "subsort(" ~ sortsym ~ "," ~ sortsym ~ ")."
+  // def subsortdec1 = "subsort(" ~ sortsym ~ "," ~ sortsym ~ ")."
   //
-  //  def termdec1 = "forall(" ~ termlist ~ "," ~ term ~ ")."
+  // def termdec1 = "forall(" ~ termlist ~ "," ~ term ~ ")."
   //
-  //  def preddec1 = "predicate(" ~ predsym ~ rep1sep(sortsym, ",") ~ ")."
+  // def preddec1 = "predicate(" ~ predsym ~ rep1sep(sortsym, ",") ~ ")."
   //
-  //  def sortsym = ident
+  // def sortsym = ident
 
   def predsym = ident
 
@@ -149,7 +149,7 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
 
 
 
-  //clause( eins || zwei  ->  drei  ).
+  //clause( eins || zwei -> drei ).
   //'||' kannst du ignorieren, das ist um die Sorts (erste Liste) vom Rest zu trennen. 'drei' sind positive literale die anderen sind negativ, das heisst bei den Literalen vor dem Pfeil muß ein 'not' davor wenn man es ins 'or' schreibt.
   //also:
   //clause(or(NEWATOMIC3(U), Size(U))).
@@ -227,9 +227,9 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
 
   def predicatedef = predsym | "(" ~ predsym ~ "," ~ arity ~ ")"
 
-  //  def sorts = "sorts[" ~ repsep(sort, ",") ~ "]."
+  // def sorts = "sorts[" ~ repsep(sort, ",") ~ "]."
   //
-  //  def sort = sortsym
+  // def sort = sortsym
 
 
   def convertInput(input: String): String = {
@@ -238,7 +238,14 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
     // "*" --> "'"
     // remove line breaks
 
-    input.replace("_", "").replace("'", "").replace("*", "'").replace(", ", ",").replace("\n", " ").replace("\t", "").replace("||", "")
+    /*   Replacements for functions and variables that begin with numbers */
+    var out = input.replaceAll("(?<=\\()()(?=\\d)", "XYZ")
+    out = out.replaceAll("(?<=\\S,)()(?=\\d)", "XYZ")
+    out = out.replace("_", "").replace("'", "").replace("*", "'").replace(", ", ",").replace("\n", " ").replace("\t", "").replace("||", "")
+    out
+
+
+    //input.replace("_", "").replace("'", "").replace("*", "'").replace(", ", ",").replace("\n", " ").replace("\t", "").replace("||", "")
 
   }
 
@@ -272,7 +279,6 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
         }
         case e: NoSuccess => {
           Console.err.println(e)
-          println(e)
           None
         }
       }
