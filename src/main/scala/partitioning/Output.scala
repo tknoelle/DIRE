@@ -32,7 +32,7 @@ class Output {
     }
 
   /**
-   * Prints the nodes with its number
+   * Prints the predicates with its number
    */
     def printPredicates(p: List[Node], file:String){
       var pr = p
@@ -52,7 +52,44 @@ class Output {
     }
 
   /**
-   * Prints the Partition of the nodes
+   * Prints the constants, functions and predicates with its number
+   */
+    def printVertices(constants:List[Node], functions:List[Node], predicates: List[Node], file:String){
+      var c = constants
+      var f = functions
+      var p = predicates
+      var num = 1
+      val size = c.size + f.size + p.size
+      val bufferedWriter = new BufferedWriter(new FileWriter(file+".net"))
+      try {
+        bufferedWriter.write("*Vertices "+size +"\n")
+        while(!c.isEmpty){
+          bufferedWriter.write(num+" "+c.head.getName)
+          bufferedWriter.newLine
+          c = c.tail
+          num = num + 1
+        }
+        while(!f.isEmpty){
+          bufferedWriter.write(num+" "+f.head.getName)
+          bufferedWriter.newLine
+          f = f.tail
+          num = num + 1
+        }
+        while(!p.isEmpty){
+          bufferedWriter.write(num+" "+p.head.getName)
+          bufferedWriter.newLine
+          p = p.tail
+          num = num + 1
+        }
+      } finally {
+        try {
+        bufferedWriter.close()
+        } catch { case _ => }
+      }
+    }
+
+  /**
+   * Prints the Partition of the predicates
    */
   def printPartitions(nodes: List[Node], file:String){
       var pr = nodes
@@ -64,6 +101,40 @@ class Output {
           bufferedWriter.write(pr.head.getPartition+"")
           bufferedWriter.newLine
           pr = pr.tail
+        }
+      } finally {
+        try {
+        bufferedWriter.close()
+        } catch { case _ => }
+      }
+  }
+
+  /**
+   * Prints the Partition of the constants, functions and predicates
+   */
+  def printPartitionsCFP(constants:List[Node], functions:List[Node], predicates: List[Node], file:String){
+      var c = constants
+      var f = functions
+      var p = predicates
+      val size = c.size + f.size + p.size
+      val bufferedWriter = new BufferedWriter(new FileWriter(file+".clu"))
+      try {
+        bufferedWriter.write("*Vertices "+size)
+        bufferedWriter.newLine
+        while(!c.isEmpty){
+          bufferedWriter.write(c.head.getPartition+"")
+          bufferedWriter.newLine
+          c = c.tail
+        }
+        while(!f.isEmpty){
+          bufferedWriter.write(f.head.getPartition+"")
+          bufferedWriter.newLine
+          f = f.tail
+        }
+        while(!p.isEmpty){
+          bufferedWriter.write(p.head.getPartition+"")
+          bufferedWriter.newLine
+          p = p.tail
         }
       } finally {
         try {

@@ -1,7 +1,7 @@
 package partitioning
 
 import core.containers.{CNFClauseStore, ClauseStorage, Node, Edge}
-import domain.fol.ast.{NegativeFOLLiteral, PositiveFOLLiteral, FOLNode, FOLClause}
+import domain.fol.ast.{NegativeFOLLiteral, PositiveFOLLiteral, FOLNode, FOLClause, Constant, Function}
 import domain.fol.parsers.SPASSIntermediateFormatParser
 import scala.collection.immutable.{HashMap}
 import helpers.Logging
@@ -30,19 +30,21 @@ class Partition extends ClauseStoragePartitioning with Logging{
 
     val out = new Output
 
-    val partitions = 8;
+    val partitions = 12;
     getGraph(module0)
     val g = newGraph()
     //addC(partitions)
     //hashnodes("partof").setCustomWeight(34715)
-    setPartitions(partitions)
+    setPartitions(partitions, nodes)
+    setPartitions(partitions, constants)
+    setPartitions(partitions, functions)
 
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
-    out.printPredicates(nodes, "output/SWEETlight")
+    out.printVertices(constants, functions, nodes, "output/SWEETLightCFP12")
     val precedence = setPrecedence
-    out.printPartitions(nodes, "output/SWEETlight8")
-    out.printMetis(nodes, hashedges, "output/SWEETlight")
-    out.printPrecedence(precedence, "output/SWEETlight")
+    out.printPartitionsCFP(constants, functions, nodes, "output/SWEETLightCFP12")
+    //out.printMetis(nodes, hashedges, "output/SWEETlight")
+    //out.printPrecedence(precedence, "output/SWEETlight")
     //addC(partitions)
     //out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach_addC")
 
@@ -61,7 +63,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
     val out = new Output
     getClauses(module0)
-    setPartitions(partitions)
+    setPartitions(partitions, nodes)
     out.printPredicates(nodes, "output/"+ output)
     out.printPartitions(nodes, "output/"+ output)
   }
@@ -116,7 +118,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
              if( f.head != f.head.args.head){
                clausefunctions = clausefunctions ::: List(f.head.top)
              }
-             else{
+             else if(f.head.top != "V" && f.head.top != "U" && f.head.top != "U1" && f.head.top != "U2"){
                clauseconstants = clauseconstants ::: List(f.head.top)
              }
              f = f.tail
@@ -445,8 +447,8 @@ class Partition extends ClauseStoragePartitioning with Logging{
    * the nodes are always put in the partition with the least weight
    */
 
-  def setPartitions(number: Int) = {
-    var n = nodes sort (_ > _)
+  def setPartitions(number: Int, node: List[Node]) = {
+    var n = node sort (_ > _)
     var x = new Array[Int](number)
     while(!n.isEmpty){
       var i = 1
