@@ -26,7 +26,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
 
 
 
-    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/SWEETlight.dfg"))
+    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/dice.dfg"))
 
     val out = new Output
 
@@ -40,11 +40,11 @@ class Partition extends ClauseStoragePartitioning with Logging{
     setPartitions(partitions, functions)
 
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
-    out.printVertices(constants, functions, nodes, "output/SWEETLightCFP12")
+    out.printVertices(constants, functions, nodes, "output/dice")
     val precedence = setPrecedence
-    out.printPartitionsCFP(constants, functions, nodes, "output/SWEETLightCFP12")
-    //out.printMetis(nodes, hashedges, "output/SWEETlight")
-    //out.printPrecedence(precedence, "output/SWEETlight")
+    //out.printPartitionsCFP(constants, functions, nodes, "output/SWEETLightCFP12")
+    out.printMetis(nodes, hashedges, "output/dice")
+    out.printPrecedence(precedence, "output/dice")
     //addC(partitions)
     //out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach_addC")
 
