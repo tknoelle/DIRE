@@ -24,7 +24,7 @@ Download the source code for DIRE, update/download all dependencies and compile 
 
     cd DIRE
 
-    sbt udpate
+    sbt update
 
     sbt compile
 
@@ -55,6 +55,17 @@ On any of those machines execute:
     import DIREShell._
 
     val remoteReasoners = runOntoFarmCluster
+
+Partition with DIRE
+-------------
+
+Start DIRE and run in the DIREShell the command 'partition'.
+
+    sbt console-quick
+
+    import DIREShell._
+
+    partition
 
 
   [1]: http://scala-lang.org
