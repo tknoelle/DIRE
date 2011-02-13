@@ -500,7 +500,7 @@ def partition: List[Actor] = {
     var in = new BufferedReader( new InputStreamReader( System.in ))
     println("Please declare the path to your clausefile:")
     var path = in.readLine
-    println("Choose the method of partitioning, 1 for NW, 2 for metis, 3 for metis with addC. You can combine them, for example 12 for NW and metis")
+    println("Choose the method of partitioning, 1 for NW, 2 for metis, 3 for metis with addC and 4 for precedence. You can combine them, for example 12 for NW and metis")
     var method = in.readLine
     println("Your output filename:")
     var out = in.readLine
@@ -533,6 +533,9 @@ def partition: List[Actor] = {
          partitions =  in.readLine.toInt
       }
       partitioner.metisaddC(path, partitions, out)
+    }
+    if(method.contains("4")){
+      partitioner.precedence(path, out)
     }
      // pass dummy empty store
 

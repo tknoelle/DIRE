@@ -26,7 +26,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
 
 
 
-    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/dice.dfg"))
+    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/SWEETa.dfg"))
 
     val out = new Output
 
@@ -40,11 +40,11 @@ class Partition extends ClauseStoragePartitioning with Logging{
     setPartitions(partitions, functions)
 
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
-    out.printVertices(constants, functions, nodes, "output/dice")
+    out.printVertices(constants, functions, nodes, "output/SWEETa")
     val precedence = setPrecedence
     //out.printPartitionsCFP(constants, functions, nodes, "output/SWEETLightCFP12")
-    out.printMetis(nodes, hashedges, "output/dice")
-    out.printPrecedence(precedence, "output/dice")
+    out.printMetis(nodes, hashedges, "output/SWEETa")
+    out.printPrecedence(precedence, "output/SWEETa")
     //addC(partitions)
     //out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach_addC")
 
@@ -89,6 +89,15 @@ class Partition extends ClauseStoragePartitioning with Logging{
     out.printMetis(nodes, hashedges, "output/"+ output +"_addC")
   }
 
+  def precedence(path: String, output: String) = {
+    val out = new Output
+    if(nodes.isEmpty){
+      val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
+      getClauses(module0)
+    }
+    val precedence = setPrecedence
+    out.printPrecedence(precedence, "output/"+ output)
+  }
 
     /**
      * Gets all nodes and edges from the graph
