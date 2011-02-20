@@ -26,7 +26,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
 
 
 
-    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/SWEETa.dfg"))
+    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/test.dfg"))
 
     val out = new Output
 
@@ -38,13 +38,14 @@ class Partition extends ClauseStoragePartitioning with Logging{
     setPartitions(partitions, nodes)
     setPartitions(partitions, constants)
     setPartitions(partitions, functions)
+    propertyHierarchy
 
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
-    out.printVertices(constants, functions, nodes, "output/SWEETa")
+    out.printVertices(constants, functions, nodes, "output/test")
     val precedence = setPrecedence
-    //out.printPartitionsCFP(constants, functions, nodes, "output/SWEETLightCFP12")
-    out.printMetis(nodes, hashedges, "output/SWEETa")
-    out.printPrecedence(precedence, "output/SWEETa")
+    out.printPartitionsCFP(constants, functions, nodes, "output/test")
+    out.printMetis(nodes, hashedges, "output/test")
+    out.printPrecedence(precedence, "output/test")
     //addC(partitions)
     //out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach_addC")
 
@@ -117,6 +118,8 @@ class Partition extends ClauseStoragePartitioning with Logging{
          var clause = List[String]()
          var clausefunctions = List[String]()
          var clauseconstants = List[String]()
+         var superproperties = List[String]()
+         var subproperties = List[String]()
          var tmp = c.head.absoluteLiterals.toArray
          var size= tmp.size
          var i = 0
@@ -139,6 +142,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
          i = 0
          while(i < size){
            clause = clause ::: List(tmp(i).top)
+           superproperties = superproperties ::: List(tmp(i).top)
            i = i + 1
          }
 
@@ -147,12 +151,13 @@ class Partition extends ClauseStoragePartitioning with Logging{
          i = 0
          while(i < size){
            clause = clause ::: List(tmp(i).top)
-
+           subproperties = subproperties ::: List(tmp(i).top.replace("-", ""))
            i = i + 1
          }
          var x = getPredicateOccurence(clause)
          getFunctionOccurence(clausefunctions)
          getConstantOccurence(clauseconstants)
+         propertyHierarchy(superproperties, subproperties)
          //clauses = clauses ::: List(x)
          //edges = edges ::: getEdges(x)
          edgesTest(x)
@@ -172,11 +177,24 @@ class Partition extends ClauseStoragePartitioning with Logging{
           node.setWeight
       }
       else{
-          val function = new Node(f.head, functions.size + 1, 1, 1, 0, false, List[Node](), 0)
+          val function = new Node(f.head, functions.size + 1, 1, 1, 0, false, List[Node](), 0, List[Node]())
           functions = functions ::: List(function)
           hashfunctions = hashfunctions + (f.head -> function)
       }
       f = f.tail
+    }
+
+  }
+
+  def propertyHierarchy(superprop: List[String], subprop:  List[String]) = {
+    var sup = superprop
+    while(!sup.isEmpty){
+      var sub = subprop
+      while(!sub.isEmpty){
+        hashnodes(sup.head).addSubproperty(hashnodes(sub.head))
+        sub = sub.tail
+      }
+      sup = sup.tail
     }
 
   }
@@ -190,7 +208,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
           node.setWeight
       }
       else{
-          val constant = new Node(c.head, constants.size + 1, 1, 1, 0, false, List[Node](), 0)
+          val constant = new Node(c.head, constants.size + 1, 1, 1, 0, false, List[Node](), 0, List[Node]())
           constants = constants ::: List(constant)
           hashconstants = hashconstants + (c.head -> constant)
       }
@@ -235,13 +253,13 @@ class Partition extends ClauseStoragePartitioning with Logging{
       }
       else{
          if(pos){
-          val node = new Node(name, nodes.size + 1, 1, 1, 0, false, List[Node](), 0)
+          val node = new Node(name, nodes.size + 1, 1, 1, 0, false, List[Node](), 0, List[Node]())
           nodes = nodes ::: List(node)
           hashnodes = hashnodes + (name -> node)
           return node
         }
         else{
-          val node = new Node(name, nodes.size + 1, 1, 0, 1, false, List[Node](), 0)
+          val node = new Node(name, nodes.size + 1, 1, 0, 1, false, List[Node](), 0, List[Node]())
           nodes = nodes ::: List(node)
           hashnodes = hashnodes + (name -> node)
           return node
@@ -500,6 +518,23 @@ class Partition extends ClauseStoragePartitioning with Logging{
     precedence = precedence ::: p
     precedence
   }
+
+  def propertyHierarchy(){
+    var n = nodes
+    while(!n.isEmpty){
+      var sub = n.head.getSubproperties
+      while(!sub.isEmpty){
+        val tmp = sub.head.getWeight
+        sub.head.setWeight
+        n.head.addWeight(sub.head.getWeight)
+        sub.head.setCustomWeight(tmp)
+        sub = sub.tail
+      }
+      n = n.tail
+    }
+  }
+
+
 
 
 }

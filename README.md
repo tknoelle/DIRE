@@ -59,7 +59,7 @@ On any of those machines execute:
 Partition with DIRE
 -------------
 
-Start DIRE and run in the DIREShell the command 'partition'.
+Start DIRE and run in the DIREShell the command 'partition'. Your partitioned files are stored in the folder 'output'.
 
     sbt console-quick
 

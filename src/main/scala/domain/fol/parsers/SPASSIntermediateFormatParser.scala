@@ -239,13 +239,13 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
     // remove line breaks
 
     /*   Replacements for functions and variables that begin with numbers */
-    var out = input.replaceAll("(?<=\\()()(?=\\d)", "XYZ")
+    /*var out = input.replaceAll("(?<=\\()()(?=\\d)", "XYZ")
     out = out.replaceAll("(?<=\\S,)()(?=\\d)", "XYZ")
     out = out.replace("_", "").replace("'", "").replace("*", "'").replace(", ", ",").replace("\n", " ").replace("\t", "").replace("||", "")
-    out
+    out      */
 
 
-    //input.replace("_", "").replace("'", "").replace("*", "'").replace(", ", ",").replace("\n", " ").replace("\t", "").replace("||", "")
+    input.replace("_", "").replace("'", "").replace("*", "'").replace(", ", ",").replace("\n", " ").replace("\t", "").replace("||", "")
 
   }
 

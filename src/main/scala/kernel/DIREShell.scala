@@ -14,7 +14,7 @@ import helpers.{DumpableString, HelperFunctions}
 import kernel._
 import dispatching.{DALCDispatcherActor, ToVoidDispatchingActor}
 import net.lag.configgy.Configgy
-import partitioning.{Test, Partition, ManualConfExampleMerger, ManualConfExamplePartitioner}
+import partitioning.{Partition, ManualConfExampleMerger, ManualConfExamplePartitioner}
 import recording.{ReasonerEvent, NaiveClauseRecorder}
 import runtime.RichString
 import se.scalablesolutions.akka.actor.{ActorRegistry, Actor}
@@ -26,7 +26,6 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException
 import Helpers._
 //import se.scalablesolutions.akka.actor.Actor.Sender.Self
 import se.scalablesolutions.akka.stm.Transaction._
-import java.io.{BufferedReader, InputStreamReader}
 
 
 
@@ -497,13 +496,14 @@ object DIREShell extends Application with Actor {
   }
 
 def partition: List[Actor] = {
-    var in = new BufferedReader( new InputStreamReader( System.in ))
+
+    //var in = new BufferedReader( new InputStreamReader( System.in ))
     println("Please declare the path to your clausefile:")
-    var path = in.readLine
+    val path = readLine
     println("Choose the method of partitioning, 1 for NW, 2 for metis, 3 for metis with addC and 4 for precedence. You can combine them, for example 12 for NW and metis")
-    var method = in.readLine
+    val method = readLine
     println("Your output filename:")
-    var out = in.readLine
+    val out = readLine
 
     // spawn remote reasoners
 
@@ -517,11 +517,11 @@ def partition: List[Actor] = {
 
     // partition the ontology
     val partitioner = new Partition
-  var partitions = 0
+    var partitions = 0
     //val partitions = partitioner.partition(CNFClauseStore())
     if(method.contains("1")){
       println("How many partitions do you want:")
-      partitions =  in.readLine.toInt
+      partitions =  readInt
       partitioner.nw(path, partitions, out)
     }
     if(method.contains("2")){
@@ -530,7 +530,7 @@ def partition: List[Actor] = {
     if(method.contains("3")){
       if(!method.contains("1")){
          println("How many partitions do you want:")
-         partitions =  in.readLine.toInt
+         partitions =  readInt
       }
       partitioner.metisaddC(path, partitions, out)
     }
@@ -560,25 +560,6 @@ def partition: List[Actor] = {
 
   rs
   }
-
-  def test = {
-    // spawn remote reasoners
-
-    // echeck if there are enought conpute nodes in the cluster
-    // spawn 5 local reasoners
-    val rs = localReasoners(5).toList
-    val ns = rs.map(_.uuid)
-
-
-    val reasoner2address: Map[Actor, String] = (rs zip rs.map(_.uuid)).foldLeft(Map[Actor, String]())(_ + _)
-
-    // partition the ontology
-    val partitioner = new Test
-    val partitions = partitioner.partition(CNFClauseStore()) // pass dummy empty store
-
-  rs
-  }
-
 
   def runOntoFarmMergedLocal: List[Actor] = {
     // spawn remote reasoners
