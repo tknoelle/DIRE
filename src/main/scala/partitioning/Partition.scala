@@ -60,6 +60,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
       )
   }
 
+
   def nw(path: String, partitions: Int, output: String, property: Int) = {
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
     val out = new Output
@@ -104,9 +105,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
     out.printPrecedence(precedence, "output/"+ output)
   }
 
-    /**
-     * Gets all nodes and edges from the graph
-     */
+  /**
+   *  Gets all nodes and edges from the graph
+   */
     def getGraph(clauses: CNFClauseStore) = {
       val x = getClauses(clauses)
       //nodes = nodes sort (_ > _)
@@ -164,7 +165,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
          getSubProperties(superproperties, subproperties)
          //clauses = clauses ::: List(x)
          //edges = edges ::: getEdges(x)
-         edgesTest(x)
+         clauseToEdges(x)
          c = c.tail
 
        }
@@ -221,6 +222,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
 
   }
 
+  /**
+   * returns a list of nodes
+   */
      def getPredicateOccurence(literals: List[String]): List[Node] = {
        val posregex = """(\w+)""".r
        val negregex = """-(\w+)""".r
@@ -271,7 +275,10 @@ class Partition extends ClauseStoragePartitioning with Logging{
       }
     }
 
-    def edgesTest(clause: List[Node]) = {
+  /**
+   * creates or updates the edges between the nodes
+   */
+    def clauseToEdges(clause: List[Node]) = {
       var edge = List[Node]()
       var edges = List[Edge]()
       var tmp = clause
@@ -282,10 +289,6 @@ class Partition extends ClauseStoragePartitioning with Logging{
         var x = tmp.apply(i)
         while(j < size){
           var y = tmp.apply(j)
-
-          // falls hier schon Nachbarn nötig entkommentieren
-          //x.addNeighbour(y)
-          //y.addneighbour(x)
           edgeoccurence(x, y)
           j = j + 1
         }
@@ -293,6 +296,10 @@ class Partition extends ClauseStoragePartitioning with Logging{
       }
     }
 
+  /**
+   * @param two nodes
+   * creates or updates the edge between the two nodes
+   */
     def edgeoccurence(x: Node, y: Node) = {
       val n1 = y.getName + x.getName
       val n2 = x.getName + y.getName
@@ -358,7 +365,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
 
         e = e.tail
       }
-      // Graphen mit zufälligen Kanten füllen, wenn x < nodenum - 1
+      // fills graph with random edges, if x < nodenum - 1
 
       var i = 0
       //nodes that have no edge get connected with a node with one edge
