@@ -502,6 +502,8 @@ def partition: List[Actor] = {
     val path = readLine
     println("Choose the method of partitioning, 1 for NW, 2 for metis, 3 for metis with addC and 4 for precedence. You can combine them, for example 12 for NW and metis")
     val method = readLine
+    println("Should property hierarchy be enabled (0 for no, 1 for yes)")
+    val prop = readline
     println("Your output filename:")
     val out = readLine
 
@@ -522,20 +524,20 @@ def partition: List[Actor] = {
     if(method.contains("1")){
       println("How many partitions do you want:")
       partitions =  readInt
-      partitioner.nw(path, partitions, out)
+      partitioner.nw(path, partitions, out, prop)
     }
     if(method.contains("2")){
-      partitioner.metis(path, out)
+      partitioner.metis(path, out, prop)
     }
     if(method.contains("3")){
       if(!method.contains("1")){
          println("How many partitions do you want:")
          partitions =  readInt
       }
-      partitioner.metisaddC(path, partitions, out)
+      partitioner.metisaddC(path, partitions, out, prop)
     }
     if(method.contains("4")){
-      partitioner.precedence(path, out)
+      partitioner.precedence(path, out, prop)
     }
      // pass dummy empty store
 

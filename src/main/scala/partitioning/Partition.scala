@@ -60,41 +60,45 @@ class Partition extends ClauseStoragePartitioning with Logging{
       )
   }
 
-  def nw(path: String, partitions: Int, output: String) = {
+  def nw(path: String, partitions: Int, output: String, property: Int) = {
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
     val out = new Output
     getClauses(module0)
+    propertyHierarchy
     setPartitions(partitions, nodes)
     out.printPredicates(nodes, "output/"+ output)
     out.printPartitions(nodes, "output/"+ output)
   }
 
-  def metis(path: String, output: String) = {
+  def metis(path: String, output: String, property: Int) = {
     val out = new Output
     if(nodes.isEmpty){
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
       getClauses(module0)
+      propertyHierarchy
       out.printPredicates(nodes, "output/"+ output)
     }
     out.printMetis(nodes, hashedges, "output/"+ output)
   }
 
-  def metisaddC(path: String, partitions: Int, output: String) = {
+  def metisaddC(path: String, partitions: Int, output: String, property: Int) = {
     val out = new Output
     if(nodes.isEmpty){
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
       getClauses(module0)
+      propertyHierarchy
       out.printPredicates(nodes, "output/"+ output)
     }
     addC(partitions)
     out.printMetis(nodes, hashedges, "output/"+ output +"_addC")
   }
 
-  def precedence(path: String, output: String) = {
+  def precedence(path: String, output: String, property: Int) = {
     val out = new Output
     if(nodes.isEmpty){
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
       getClauses(module0)
+      propertyHierarchy
     }
     val precedence = setPrecedence
     out.printPrecedence(precedence, "output/"+ output)
@@ -157,7 +161,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
          var x = getPredicateOccurence(clause)
          getFunctionOccurence(clausefunctions)
          getConstantOccurence(clauseconstants)
-         propertyHierarchy(superproperties, subproperties)
+         getSubProperties(superproperties, subproperties)
          //clauses = clauses ::: List(x)
          //edges = edges ::: getEdges(x)
          edgesTest(x)
@@ -186,7 +190,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
 
   }
 
-  def propertyHierarchy(superprop: List[String], subprop:  List[String]) = {
+  def getSubProperties(superprop: List[String], subprop:  List[String]) = {
     var sup = superprop
     while(!sup.isEmpty){
       var sub = subprop
