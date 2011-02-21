@@ -65,7 +65,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
     val out = new Output
     getClauses(module0)
-    propertyHierarchy
+    if(property == 1){
+      propertyHierarchy
+    }
     setPartitions(partitions, nodes)
     out.printPredicates(nodes, "output/"+ output)
     out.printPartitions(nodes, "output/"+ output)
@@ -76,7 +78,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
     if(nodes.isEmpty){
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
       getClauses(module0)
+      if(property == 1){
       propertyHierarchy
+    }
       out.printPredicates(nodes, "output/"+ output)
     }
     out.printMetis(nodes, hashedges, "output/"+ output)
@@ -87,7 +91,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
     if(nodes.isEmpty){
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
       getClauses(module0)
+      if(property == 1){
       propertyHierarchy
+    }
       out.printPredicates(nodes, "output/"+ output)
     }
     addC(partitions)
@@ -99,7 +105,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
     if(nodes.isEmpty){
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
       getClauses(module0)
-      propertyHierarchy
+      if(property == 1){
+        propertyHierarchy
+      }
     }
     val precedence = setPrecedence
     out.printPrecedence(precedence, "output/"+ output)
