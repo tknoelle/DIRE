@@ -40,7 +40,7 @@ class Output {
       try {
         bufferedWriter.write("*Vertices "+p.size +"\n")
         while(!pr.isEmpty){
-          bufferedWriter.write(pr.head.getNum+" "+pr.head.getName)
+          bufferedWriter.write(pr.head.getNum+" "+pr.head.getName+" "+pr.head.getWeight)
           bufferedWriter.newLine
           pr = pr.tail
         }

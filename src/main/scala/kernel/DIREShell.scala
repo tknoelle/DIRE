@@ -497,13 +497,12 @@ object DIREShell extends Application with Actor {
 
 def partition: List[Actor] = {
 
-    //var in = new BufferedReader( new InputStreamReader( System.in ))
     println("Please declare the path to your clausefile:")
     val path = readLine
     println("Choose the method of partitioning, 1 for NW, 2 for metis, 3 for metis with addC and 4 for precedence. You can combine them, for example 12 for NW and metis")
     val method = readLine
     println("Should property hierarchy be enabled (0 for no, 1 for yes)")
-    val prop = readline
+    val prop = readLine.toInt
     println("Your output filename:")
     val out = readLine
 

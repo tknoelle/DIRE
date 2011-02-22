@@ -30,7 +30,11 @@ class Node(val name: String, var num: Int, var weight: Int, var pos: Int, var ne
   def setNeighbours(newneighbours: List[Node]) = neighbours = newneighbours
   def addNeighbour(newneighbour: Node) = neighbours = neighbours ::: List(newneighbour)
   def setPartition(newp: Int) = partition = newp
-  def addSubproperty(sub: Node) = subproperties = subproperties ::: List(sub)
+  def addSubproperty(sub: Node) = {
+    if(!subproperties.contains(sub)){
+      subproperties = subproperties ::: List(sub)
+    }
+  }
   def setSubproperties(sub: List[Node]) = subproperties = sub
   
 }

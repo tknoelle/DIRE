@@ -20,6 +20,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
   var hashfunctions = HashMap[String, Node]()
   var constants = List[Node]()
   var hashconstants = HashMap[String, Node]()
+  var visited = List[Node]()
 
 
   override def partition(clauses: ClauseStorage) = {
@@ -46,14 +47,15 @@ class Partition extends ClauseStoragePartitioning with Logging{
     out.printPartitionsCFP(constants, functions, nodes, "output/test")
     out.printMetis(nodes, hashedges, "output/test")
     out.printPrecedence(precedence, "output/test")
+    out.printPredicates(nodes, "output/test")
     //addC(partitions)
     //out.printMetis(nodes, hashedges, "/home/tk/hiwi/DIRE/input/conf/einfach_addC")
 
-    module0.forall({clause: FOLClause => clause.literals.exists(
+    /*module0.forall({clause: FOLClause => clause.literals.exists(
       {literal : FOLNode => (literal match {
         case PositiveFOLLiteral(posL) => posL.top;
         case NegativeFOLLiteral(negL) => negL.top;
-      }).substring(0, 2) == "O0"})})
+      }).substring(0, 2) == "O0"})})       */
 
     List(
       CNFClauseStore(module0)
@@ -526,7 +528,9 @@ class Partition extends ClauseStoragePartitioning with Logging{
     }
   }
 
-
+  /**
+   *  creates a precedence as a list of nodes
+   */
   def setPrecedence() = {
     var p = nodes sort (_ < _)
     var c = constants sort (_ < _)
@@ -538,7 +542,7 @@ class Partition extends ClauseStoragePartitioning with Logging{
     precedence
   }
 
-  def propertyHierarchy(){
+  /*def propertyHierarchy(){
     var n = nodes
     while(!n.isEmpty){
       var sub = n.head.getSubproperties
@@ -550,6 +554,38 @@ class Partition extends ClauseStoragePartitioning with Logging{
         sub = sub.tail
       }
       n = n.tail
+    }
+  } */
+
+  /**
+   * adds the weight of all subproperties to a node
+   */
+  def propertyNode(node: Node): Node = {
+    if(!visited.contains(node)){
+      visited = visited ::: List[Node](node)
+      var tmp = node.getSubproperties
+      while(!tmp.isEmpty){
+        propertyNode(tmp.head)
+        node.addWeight(tmp.head.getWeight)
+        tmp = tmp.tail
+      }
+    }
+    node
+  }
+
+  /**
+   * adds the weight of all subproperties to all nodes
+   */
+  def propertyHierarchy() = {
+    var n = nodes
+    while(!n.isEmpty){
+      if(visited.contains(n.head)){
+        n = n.tail
+      }
+      else{
+        propertyNode(n.head)
+        n = n.tail
+      }
     }
   }
 
