@@ -5,13 +5,8 @@ import domain.fol.parsers.SPASSIntermediateFormatParser
 import scala.collection.immutable.HashMap
 import helpers.Logging
 import java.io._
-import core.ordering.{ALCLPOComparator, Precedence, LazyLexicographicPrecedence}
-import core._
-import core.reduction._
-import core.rewriting.{VariableRewriter}
-import ordering.{CustomConferencePartitionedPrecedence, ALCLPOComparator}
-import org.neo4j.kernel.EmbeddedGraphDatabase
-import selection.{DALCRSelector}
+import core.ordering.{ALCLPOComparator, LazyLexicographicPrecedence}
+
 
 class Partition extends ClauseStoragePartitioning with Logging {
 
