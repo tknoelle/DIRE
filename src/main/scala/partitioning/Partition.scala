@@ -6,7 +6,7 @@ import scala.collection.immutable.HashMap
 import helpers.Logging
 import java.io._
 import core.ordering.{ALCLPOComparator, LazyLexicographicPrecedence}
-
+import domain.fol.ast.FOLNode
 
 class Partition extends ClauseStoragePartitioning with Logging {
 
@@ -20,6 +20,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
   var constants = List[Node]()
   var hashconstants = HashMap[String, Node]()
   var visited = List[Node]()
+  var unorderedClauses = 0
 
 
   override def partition(clauses: ClauseStorage) = {
@@ -31,7 +32,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
 
     val partitions = 12;
 
-    getClauses(module0)
+    getClauses(module0, 1)
     val g = newGraph()
     //addC(partitions)
     //hashnodes("partof").setCustomWeight(34715)
@@ -39,6 +40,12 @@ class Partition extends ClauseStoragePartitioning with Logging {
     setPartitions(partitions, constants)
     setPartitions(partitions, functions)
     propertyHierarchy
+
+    var x = edges
+    while(!x.isEmpty){
+      println(x.head.getNodes.head.getName+" -> "+x.head.getNodes.tail.head.getName)
+      x = x.tail
+    }
 
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
     out.printVertices(constants, functions, nodes, "output/test")
@@ -68,7 +75,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
   def nw(path: String, partitions: Int, output: String, property: Int) = {
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
     val out = new Output
-    getClauses(module0)
+    getClauses(module0, 0)
     if (property == 1) {
       propertyHierarchy
     }
@@ -84,7 +91,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
     val out = new Output
     if (nodes.isEmpty) {
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
-      getClauses(module0)
+      getClauses(module0, 0)
       if (property == 1) {
         propertyHierarchy
       }
@@ -100,7 +107,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
     val out = new Output
     if (nodes.isEmpty) {
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
-      getClauses(module0)
+      getClauses(module0, 0)
       if (property == 1) {
         propertyHierarchy
       }
@@ -117,7 +124,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
     val out = new Output
     if (nodes.isEmpty) {
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
-      getClauses(module0)
+      getClauses(module0, 0)
       if (property == 1) {
         propertyHierarchy
       }
@@ -130,12 +137,12 @@ class Partition extends ClauseStoragePartitioning with Logging {
   /**
    * Extracts predicates, functions and constants from a CNFClausestore and calls for every clause the occurence methods
    */
-  def getClauses(clausestore: CNFClauseStore) = {
+  def getClauses(clausestore: CNFClauseStore, literalComparison: Integer) = {
     var c = clausestore
     var clauses = List[List[Node]]()
     var edges = List[Edge]()
     while (!c.isEmpty) {
-      var clause = List[String]()
+      var clause = Map[String, FOLNode]()
       var clausefunctions = List[String]()
       var clauseconstants = List[String]()
       var superproperties = List[String]()
@@ -161,7 +168,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
       size = tmp.size
       i = 0
       while (i < size) {
-        clause = clause ::: List(tmp(i).top)
+        clause = clause + (tmp(i).top -> tmp(i))
         superproperties = superproperties ::: List(tmp(i).top)
         i = i + 1
       }
@@ -170,22 +177,123 @@ class Partition extends ClauseStoragePartitioning with Logging {
       size = tmp.size
       i = 0
       while (i < size) {
-        clause = clause ::: List(tmp(i).top)
+        //clause = clause ::: List(tmp(i).top)
+        clause = clause + (tmp(i).top -> tmp(i))
         subproperties = subproperties ::: List(tmp(i).top.replace("-", ""))
         i = i + 1
       }
-      var x = getPredicateOccurence(clause)
+
+      var x = List[Node]()
+      if (literalComparison == 0) {
+        x = getPredicateOccurence(clause)
+        clauseToEdges(x)
+      }
+      else {
+        x = getPredicateOccurence(clause)
+        literalCompare(clause)
+      }
       getFunctionOccurence(clausefunctions)
       getConstantOccurence(clauseconstants)
       getSubProperties(superproperties, subproperties)
       //clauses = clauses ::: List(x)
       //edges = edges ::: getEdges(x)
-      clauseToEdges(x)
-      c = c.tail
 
+      c = c.tail
     }
     //clauses
     //edges
+  }
+
+  /**
+   * Orders the literals in the clause with LPO (core.ordering.ALCLPOComparator)
+   */
+  def literalCompare(predicates: Map[String, FOLNode]) {
+    //work in progress
+    var order = List[Node]()
+    var unordered = List[Node]()
+    var p = predicates.keySet.toList
+    if (p.size == 0) {
+      return List[Node]()
+    }
+    else if (p.size == 1) {
+      return List[Node](hashnodes(p.head))
+    }
+    else {
+      var a = predicates.apply(p.head)
+      var aNode = hashnodes(p.head.replace("-", ""))
+      p = p.tail
+      var b = predicates.apply(p.head)
+      var bNode = hashnodes(p.head.replace("-", ""))
+      p = p.tail
+      var z = PrecedenceComparator.literalComparator.compare(a, b).get
+      if (z == 1) {
+        order = List[Node](bNode, aNode)
+      }
+      else if (z == -1) {
+        order = List[Node](aNode, bNode)
+      }
+      else {
+        unordered = List[Node](aNode, bNode)
+      }
+
+      while (!p.isEmpty) {
+        val c = predicates.apply(p.head)
+        val cNode = hashnodes(p.head.replace("-", ""))
+        p = p.tail
+        z = PrecedenceComparator.literalComparator.compare(c, b).get
+        if (z == 1) {
+          z = PrecedenceComparator.literalComparator.compare(c, a).get
+          if (z == 1) {
+            order = List[Node](aNode, cNode)
+            if (!unordered.contains(bNode)) {
+              unordered = List[Node]()
+            }
+          }
+          else if (z == -1) {
+            order = List[Node](cNode, aNode)
+            if (!unordered.isEmpty) {
+              unordered = List[Node]()
+            }
+          }
+          else {
+            unordered = List[Node](cNode, aNode)
+          }
+        }
+        else if (z == -1) {
+
+        }
+        else {
+          unordered = List[Node](bNode, cNode)
+        }
+      }
+      if (unordered.isEmpty) {
+        var a = order.head
+        order = order.tail
+        var b = order.head
+        order = order.tail
+        edgeoccurence(a, b)
+      }
+      else {
+        unorderedClauses = unorderedClauses + 1
+        edgeoccurence(order.head, unordered.head)
+        unordered = unordered.tail
+        edgeoccurence(order.head, unordered.head)
+      }
+
+    }
+    /*
+    while(!p.isEmpty){
+      var x = p.tail
+      while(!x.isEmpty){
+        var z = PrecedenceComparator.literalComparator.compare(predicates.apply(p.head), predicates.apply(x.head)).get
+        if(z != 1 && z != -1){
+          println(z)
+        }
+        x = x.tail
+      }
+      p = p.tail
+    }     */
+    p
   }
 
   def getFunctionOccurence(clausefunctions: List[String]) = {
@@ -240,10 +348,10 @@ class Partition extends ClauseStoragePartitioning with Logging {
   /**
    * returns a list of nodes
    */
-  def getPredicateOccurence(literals: List[String]): List[Node] = {
+  def getPredicateOccurence(literals: Map[String, FOLNode]): List[Node] = {
     val posregex = """(\w+)""".r
     val negregex = """-(\w+)""".r
-    var l = literals
+    var l = literals.keySet.toList
     var clause = List[Node]()
     while (!l.isEmpty) {
       l.head match {
@@ -601,7 +709,6 @@ object PrecedenceComparator {
 
   lazy val precedence = LazyLexicographicPrecedence
   lazy val literalComparator = new ALCLPOComparator(this)
-
 
 
 }
