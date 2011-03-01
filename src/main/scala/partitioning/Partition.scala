@@ -46,6 +46,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
       println(x.head.getNodes.head.getName+" -> "+x.head.getNodes.tail.head.getName)
       x = x.tail
     }
+    println(unorderedClauses)
 
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
     out.printVertices(constants, functions, nodes, "output/test")
@@ -184,14 +185,15 @@ class Partition extends ClauseStoragePartitioning with Logging {
       }
 
       var x = List[Node]()
-      if (literalComparison == 0) {
-        x = getPredicateOccurence(clause)
-        clauseToEdges(x)
-      }
-      else {
+      if(literalComparison == 1) {
         x = getPredicateOccurence(clause)
         literalCompare(clause)
       }
+      else {
+        x = getPredicateOccurence(clause)
+        clauseToEdges(x)
+      }
+
       getFunctionOccurence(clausefunctions)
       getConstantOccurence(clauseconstants)
       getSubProperties(superproperties, subproperties)
@@ -279,21 +281,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
         unordered = unordered.tail
         edgeoccurence(order.head, unordered.head)
       }
-
     }
-    /*
-    while(!p.isEmpty){
-      var x = p.tail
-      while(!x.isEmpty){
-        var z = PrecedenceComparator.literalComparator.compare(predicates.apply(p.head), predicates.apply(x.head)).get
-        if(z != 1 && z != -1){
-          println(z)
-        }
-        x = x.tail
-      }
-      p = p.tail
-    }     */
-    p
   }
 
   def getFunctionOccurence(clausefunctions: List[String]) = {
