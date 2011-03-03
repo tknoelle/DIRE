@@ -73,10 +73,10 @@ class Partition extends ClauseStoragePartitioning with Logging {
   /**
    * NW Partitioning called from the DIREShell
    */
-  def nw(path: String, partitions: Int, output: String, property: Int) = {
+  def nw(path: String, partitions: Int, output: String, property: Int, edges: Int) = {
     val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
     val out = new Output
-    getClauses(module0, 0)
+    getClauses(module0, edges)
     if (property == 1) {
       propertyHierarchy
     }
@@ -88,11 +88,11 @@ class Partition extends ClauseStoragePartitioning with Logging {
   /**
    * Metis Partitioning called from the DIREShell
    */
-  def metis(path: String, output: String, property: Int) = {
+  def metis(path: String, output: String, property: Int, edges: Int) = {
     val out = new Output
     if (nodes.isEmpty) {
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
-      getClauses(module0, 0)
+      getClauses(module0, edges)
       if (property == 1) {
         propertyHierarchy
       }
@@ -104,11 +104,11 @@ class Partition extends ClauseStoragePartitioning with Logging {
   /**
    * Metis with addC called from the DIREShell
    */
-  def metisaddC(path: String, partitions: Int, output: String, property: Int) = {
+  def metisaddC(path: String, partitions: Int, output: String, property: Int, edges: Int) = {
     val out = new Output
     if (nodes.isEmpty) {
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
-      getClauses(module0, 0)
+      getClauses(module0, edges)
       if (property == 1) {
         propertyHierarchy
       }
@@ -121,11 +121,11 @@ class Partition extends ClauseStoragePartitioning with Logging {
   /**
    * Creating a precedence called from the DIREShell
    */
-  def precedence(path: String, output: String, property: Int) = {
+  def precedence(path: String, output: String, property: Int, edges: Int) = {
     val out = new Output
     if (nodes.isEmpty) {
       val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
-      getClauses(module0, 0)
+      getClauses(module0, edges)
       if (property == 1) {
         propertyHierarchy
       }
