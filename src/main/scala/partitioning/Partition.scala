@@ -83,6 +83,10 @@ class Partition extends ClauseStoragePartitioning with Logging {
     setPartitions(partitions, nodes)
     out.printPredicates(nodes, "output/" + output)
     out.printPartitions(nodes, "output/" + output)
+    if(unorderedClauses!=0){
+      println(unorderedClauses+" not complete ordered")
+      unorderedClauses = 0
+    }
   }
 
   /**
@@ -99,6 +103,10 @@ class Partition extends ClauseStoragePartitioning with Logging {
       out.printPredicates(nodes, "output/" + output)
     }
     out.printMetis(nodes, hashedges, "output/" + output)
+    if(unorderedClauses!=0){
+      println(unorderedClauses+" not complete ordered")
+      unorderedClauses = 0
+    }
   }
 
   /**
@@ -116,6 +124,10 @@ class Partition extends ClauseStoragePartitioning with Logging {
     }
     addC(partitions)
     out.printMetis(nodes, hashedges, "output/" + output + "_addC")
+    if(unorderedClauses!=0){
+      println(unorderedClauses+" not complete ordered")
+      unorderedClauses = 0
+    }
   }
 
   /**
