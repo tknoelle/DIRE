@@ -564,6 +564,16 @@ def partition: List[Actor] = {
   rs
   }
 
+  def parsertest: List[Actor] = {
+    val rs = localReasoners(5).toList
+    val ns = rs.map(_.uuid)
+
+    val partitioner = new Partition
+    val partitions = partitioner.parsertest()
+
+    rs
+  }
+
   def runOntoFarmMergedLocal: List[Actor] = {
     // spawn remote reasoners
 

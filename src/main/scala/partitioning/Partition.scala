@@ -23,6 +23,10 @@ class Partition extends ClauseStoragePartitioning with Logging {
   var unorderedClauses = 0
 
 
+  def parsertest() = {
+    SPASSIntermediateFormatParser.parseDFGFromFile(new File("input/conf/test.dfg"))
+  }
+
   override def partition(clauses: ClauseStorage) = {
 
 

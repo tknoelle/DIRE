@@ -22,6 +22,8 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
 
   def problem = "beginproblem" ~ "(" ~ ident ~ ")." ~ description ~ ". " ~ logicalpart ~ "endproblem" ~ "."
 
+  def problemwithsettings = "beginproblem" ~ "(" ~ ident ~ ")." ~ description ~ ". " ~ logicalpart ~  settings2 ~ ". " ~ "endproblem" ~ "."
+
 
   def description = "listofdescriptions" ~ ". " ~ name ~ author ~ opt(version) ~ opt(logic) ~ status ~ desc ~ opt(date) ~ "endoflist"
 
@@ -216,6 +218,8 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
 
   def settings = "listofsettings(SPASS). {'" ~ "'} endoflist"
 
+  def settings2 = "listofsettings" ~ "endoflist"
+
 
   def functions = "functions" ~ "[" ~ funs ~ "]"
 
@@ -244,8 +248,10 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
     out = out.replace("_", "").replace("'", "").replace("*", "'").replace(", ", ",").replace("\n", " ").replace("\t", "").replace("||", "")
     out      */
 
+    //old replacements
+    //input.replace("_", "").replace("'", "").replace("*", "'").replace(", ", ",").replace("\n", " ").replace("\t", "").replace("||", "")
 
-    input.replace("_", "").replace("'", "").replace("*", "'").replace(", ", ",").replace("\n", " ").replace("\t", "").replace("||", "")
+    input.replace("_", "").replace("'", "").replace("*", "'").replace(", ", ",").replace("\n", " ").replace("\t", "").replace("||", "").replace("listofsettings(SPASS). {'", "listofsettings").replace("'} endoflist", "endoflist")
 
   }
 
@@ -330,6 +336,34 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
       }
     }
 
+  }
+
+  def parseDFGFromFile(file: File) = {
+    val lines = scala.io.Source.fromFile(file).mkString
+    val text: String = lines // parse
+
+    val tokens = new lexical.Scanner(convertInput(text))
+      phrase(problemwithsettings)(tokens) match {
+        case Success(tree, _) => {
+          println(tree)
+          true
+
+        }
+        case e: NoSuccess => {
+          Console.err.println(e)
+          false
+        }
+      }
+
+     /*
+    val clauses = SPASSIntermediateFormatParser.parseClauseStoreShared(text)
+
+    clauses match {
+      case None => throw new IllegalStateException("Could not load clauses from file")
+      case Some(clauses) => {
+        clauses
+      }
+    }*/
   }
 
 }
