@@ -341,8 +341,8 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
   def parseDFGFromFile(file: File) = {
     val lines = scala.io.Source.fromFile(file).mkString
     val text: String = lines // parse
-
     val tokens = new lexical.Scanner(convertInput(text))
+    if(text.contains("list_of_settings")){
       phrase(problemwithsettings)(tokens) match {
         case Success(tree, _) => {
           println(tree)
@@ -354,6 +354,21 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
           false
         }
       }
+    }
+    else{
+      phrase(problem)(tokens) match {
+        case Success(tree, _) => {
+          println(tree)
+          true
+
+        }
+        case e: NoSuccess => {
+          Console.err.println(e)
+          false
+        }
+      }
+    }
+
 
      /*
     val clauses = SPASSIntermediateFormatParser.parseClauseStoreShared(text)
