@@ -220,14 +220,22 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
 
   def settings2 = "listofsettings" ~ "endoflist"
 
+  //def settings2 = "listofsettings" ~  "endoflist" ^^ {
+   // case "listofsettings" ~ settings ~ "endoflist" => settings
+  //}
+
 
   def functions = "functions" ~ "[" ~ funs ~ "]"
 
-  def funs: Parser[List[Any]] = repsep(functiondef, ",")
+  //def funs: Parser[List[Any]] = repsep(functiondef,  ",")    //can cause a stackoverflow
+
+  def funs: Parser[List[Any]] = rep1(functiondef,  "," ~ functiondef)
 
   def functiondef = "(" ~ funsym ~ "," ~ arity ~ ")"
 
-  def predicates = "predicates" ~ "[" ~ repsep(predicatedef, ",") ~ "]"
+  //def predicates = "predicates" ~ "[" ~ repsep(predicatedef, ",") ~ "]"   //can cause a stackoverflow
+
+  def predicates = "predicates" ~ "[" ~ rep1(predicatedef, "," ~ predicatedef) ~ "]"
 
   def predicatedef = predsym | "(" ~ predsym ~ "," ~ arity ~ ")"
 
