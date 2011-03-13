@@ -17,7 +17,8 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
           "dnf", "listofclauses", "true", "false", "axioms", "conjectures", "listofformulae",
           "endoflist", "predicate", "subsort", "sort", "freely", "generatedby", "listofdeclarations",
           "listofsymbols", "sorts", "predicates", "functions", "listofdescriptions", "satisfiable", "unsatisfiable",
-          "unknown", "endproblem", "beginproblem", "formula", "name", "author", "version", "logic", "status", "description", "date", "->", "listofsettings")
+          "unknown", "endproblem", "beginproblem", "formula", "name", "author", "version", "logic", "status", "description",
+          "date", "->", "listofsettings", "setflag", "setprecedence", "setselection")
 
 
   def problem = "beginproblem" ~ "(" ~ ident ~ ")." ~ description ~ ". " ~ logicalpart ~ "endproblem" ~ "."
@@ -218,7 +219,13 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
 
   def settings = "listofsettings(SPASS). {'" ~ "'} endoflist"
 
-  def settings2 = "listofsettings" ~ "endoflist"
+  def settings2 = "listofsettings" ~ rep("setflag" ~ "(" ~ flag ~ "," ~ arity ~ ").") ~ "setprecedence" ~ "(" ~ repsep(precedence, ",") ~ ")." ~ "setselection" ~ "(" ~ repsep(selection, ",") ~ ")." ~ "endoflist"
+
+  def flag = ident
+
+  def precedence = ident
+
+  def selection = ident
 
   //def settings2 = "listofsettings" ~  "endoflist" ^^ {
    // case "listofsettings" ~ settings ~ "endoflist" => settings
