@@ -134,6 +134,7 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
   }
 
 
+
   def clause: Parser[ALCDClause] = "clause" ~ "(" ~ (cnfclause | dnfclause) ~ "," ~ label ~ ")." ^^ {
     case "clause" ~ "(" ~ c ~ "," ~ l ~ ")." => ALCDClause(c.args: _*)
   }
@@ -289,6 +290,21 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
 
     }
 
+  def parseSymbols(dsl: String) = {
+      val tokens = new lexical.Scanner(convertInput(dsl))
+      phrase(symbollist)(tokens) match {
+        case Success(tree, _) => {
+          Some(tree)
+
+        }
+        case e: NoSuccess => {
+          Console.err.println(e)
+          None
+        }
+      }
+  }
+
+
 
   def parseClauseStore(dsl: String): Option[List[FOLClause]] =
     {
@@ -324,6 +340,20 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
 
     }
 
+  def parseSettings(dsl: String) = {
+      val tokens = new lexical.Scanner(convertInput(dsl))
+      phrase(settings2)(tokens) match {
+        case Success(tree, _) => {
+          Some(tree)
+
+        }
+        case e: NoSuccess => {
+          Console.err.println(e)
+          None
+        }
+      }
+  }
+
 
   def parseFromFile(file: File): List[FOLClause] = {
     val lines = scala.io.Source.fromFile(file).mkString
@@ -355,45 +385,79 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
 
   def parseDFGFromFile(file: File) = {
     val lines = scala.io.Source.fromFile(file).mkString
-    val text: String = lines // parse
-    val tokens = new lexical.Scanner(convertInput(text))
-    if(text.contains("list_of_settings")){
+    val text: String = lines
+    var t = text.split("end_of_list.")
+    for (x: String <- t) {
+
+      var tmp = x
+      println(tmp)
+      while (tmp.startsWith("\n")) {
+        tmp = tmp.replaceFirst("\n", "")
+      }
+      if (tmp.startsWith("begin_problem")) {
+        println(tmp.concat("end_of_list. "))
+      }
+      else if (tmp.startsWith("list_of_symbols.")) {
+        val symbols = SPASSIntermediateFormatParser.parseSymbols(tmp.concat("end_of_list. "))
+
+        symbols match {
+          case None => throw new IllegalStateException("Could not load symbols from file")
+          case Some(symbols) => {
+            println(symbols)
+          }
+        }
+      }
+      else if (tmp.startsWith("list_of_clauses")) {
+
+        val clauses = SPASSIntermediateFormatParser.parseClauseStore(tmp.concat("end_of_list. "))
+        clauses match {
+          case None => throw new IllegalStateException("Could not load clauses from file")
+          case Some(clauses) => {
+            println(clauses)
+          }
+        }
+      }
+      else if (tmp.startsWith("list_of_settings")) {
+        val settings = SPASSIntermediateFormatParser.parseSettings(tmp.concat("end_of_list"))
+        settings match {
+          case None => throw new IllegalStateException("Could not load settings from file")
+          case Some(settings) => {
+            println(settings)
+          }
+        }
+      }
+    }
+    //var content = parseDFG(text)  //returns the whole dfg file as one tree
+
+  }
+
+  def parseDFG(dfg: String) = {
+    val tokens = new lexical.Scanner(convertInput(dfg))
+
+    if(dfg.contains("list_of_settings")){
       phrase(problemwithsettings)(tokens) match {
         case Success(tree, _) => {
-          println(tree)
-          true
+          Some(tree)
 
         }
         case e: NoSuccess => {
           Console.err.println(e)
-          false
+          None
         }
       }
     }
     else{
       phrase(problem)(tokens) match {
         case Success(tree, _) => {
-          println(tree)
-          true
+          Some(tree)
 
         }
         case e: NoSuccess => {
           Console.err.println(e)
-          false
+          None
         }
       }
     }
-
-
-     /*
-    val clauses = SPASSIntermediateFormatParser.parseClauseStoreShared(text)
-
-    clauses match {
-      case None => throw new IllegalStateException("Could not load clauses from file")
-      case Some(clauses) => {
-        clauses
-      }
-    }*/
   }
 
 }
