@@ -233,19 +233,35 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
   //}
 
 
-  def functions = "functions" ~ "[" ~ funs ~ "]"
+  def functions = "functions" ~ "[" ~ funs ~ "]" ^^ {
+    case "functions" ~ "[" ~ funs ~ "]" => funs
+  }
 
-  //def funs: Parser[List[Any]] = repsep(functiondef,  ",")    //can cause a stackoverflow
+  //def funs: Parser[List[Any]] = repsep(functiondef,  ",") ^^ {
+   // case functiondef => List(functiondef)
+  //}   //can cause a stackoverflow
 
-  def funs: Parser[List[Any]] = rep1(functiondef,  "," ~ functiondef)
+  def funs: Parser[List[Any]] = rep1(functiondef,  "," ~ functiondef) ^^ {
+    case functiondef => List(functiondef)
+  }
 
-  def functiondef = "(" ~ funsym ~ "," ~ arity ~ ")"
 
-  //def predicates = "predicates" ~ "[" ~ repsep(predicatedef, ",") ~ "]"   //can cause a stackoverflow
+  def functiondef = "(" ~ funsym ~ "," ~ arity ~ ")" ^^ {
+    case "(" ~ funsym ~ "," ~ arity ~ ")" => Set(funsym, arity)
+  }
 
-  def predicates = "predicates" ~ "[" ~ rep1(predicatedef, "," ~ predicatedef) ~ "]"
+  //def predicates = "predicates" ~ "[" ~ repsep(predicatedef, ",") ~ "]" ^^ {
+  //  case predicatedef => List(predicatedef)
+  //}  //can cause a stackoverflow
 
-  def predicatedef = predsym | "(" ~ predsym ~ "," ~ arity ~ ")"
+  def predicates = "predicates" ~ "[" ~ rep1(predicatedef, "," ~ predicatedef) ~ "]" ^^ {
+    case predicatedef => List(predicatedef)
+  }
+
+  def predicatedef = predsym | "(" ~ predsym ~ "," ~ arity ~ ")" ^^ {
+    case "(" ~ predsym ~ "," ~ arity ~ ")" => Set(predsym, arity)
+    case predsym => predsym
+  }
 
   // def sorts = "sorts[" ~ repsep(sort, ",") ~ "]."
   //
