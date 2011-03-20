@@ -5,6 +5,7 @@ import core.containers.{ClauseStorage, CNFClauseStore}
 import helpers.Logging
 import java.io.File
 import scala.util.parsing.combinator.syntactical._
+import scala.collection.immutable.Map
 
 /**
 * User: nowi
@@ -220,11 +221,19 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
 
   def settings = "listofsettings(SPASS). {'" ~ "'} endoflist"
 
-  def settings2 = "listofsettings" ~ rep("setflag" ~ "(" ~ flag ~ "," ~ arity ~ ").") ~ "setprecedence" ~ "(" ~ repsep(precedence, ",") ~ ")." ~ "setselection" ~ "(" ~ repsep(selection, ",") ~ ")." ~ "endoflist"
+  def settings2 = "listofsettings" ~ flags ~ "setprecedence" ~ "(" ~ precedence ~ ")." ~ "setselection" ~ "(" ~ selections ~ ")." ~ "endoflist" ^^{
+    case "listofsettings" ~ flags ~ "setprecedence" ~ "(" ~ precedence ~ ")." ~ "setselection" ~ "(" ~ selections ~ ")." ~ "endoflist" => precedence
+  }
+
+  def flags = rep("setflag" ~ "(" ~ flag ~ "," ~ arity ~ ").")
+
+  def precedence = repsep(precedenceitem, ",")
+
+  def selections = repsep(selection, ",")
 
   def flag = ident
 
-  def precedence = ident
+  def precedenceitem = ident
 
   def selection = ident
 
@@ -399,7 +408,8 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
 
   }
 
-  def parseDFGFromFile(file: File) = {
+  def parseDFGFromFile(file: File):Map[String, Object] = {
+    var content = Map[String, Object]()
     val lines = scala.io.Source.fromFile(file).mkString
     val text: String = lines
     var t = text.split("end_of_list.")
@@ -429,7 +439,7 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
         clauses match {
           case None => throw new IllegalStateException("Could not load clauses from file")
           case Some(clauses) => {
-            println(clauses)
+            content = content + ("clauses" -> clauses)
           }
         }
       }
@@ -439,12 +449,13 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
           case None => throw new IllegalStateException("Could not load settings from file")
           case Some(settings) => {
             println(settings)
+            content = content + ("precedence" -> settings)
           }
         }
       }
     }
     //var content = parseDFG(text)  //returns the whole dfg file as one tree
-
+    content
   }
 
   def parseDFG(dfg: String) = {
