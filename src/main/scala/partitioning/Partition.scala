@@ -708,10 +708,29 @@ class Partition extends ClauseStoragePartitioning with Logging {
 
 }
 
+object Precedence  extends Precedence {
+  // build the precedence list from the linked initial  clausestore
+  val cache : MMap[(String,String),Int] = scala.collection.mutable.HashMap[(String,String),Int]()
+
+  private val comparator = (x: String, y: String) => (x compareToIgnoreCase y) match {
+      case result: Int if (result < 0) => -1
+      case result: Int if (result == 0) => 0
+      case result: Int if (result > 0) => 1
+    }
+
+
+
+  override def compare(a: String, b: String) = {
+    // check if we already compared this, if not add to cache
+    val compared = comparator(a,b)
+    cache.getOrElseUpdate((a,b),comparator(a,b))
+
+  }
+}
 
 object PrecedenceComparator {
 
-  lazy val precedence = LazyLexicographicPrecedence
+  lazy val precedence = Precedence
   lazy val literalComparator = new ALCLPOComparator(this)
 
 
