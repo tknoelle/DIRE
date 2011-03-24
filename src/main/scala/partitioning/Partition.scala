@@ -7,6 +7,7 @@ import helpers.Logging
 import java.io._
 import core.ordering.{ALCLPOComparator, LazyLexicographicPrecedence}
 import domain.fol.ast.FOLNode
+import scala.collection.mutable.{Map => MMap}
 
 class Partition extends ClauseStoragePartitioning with Logging {
 
@@ -21,7 +22,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
   var hashconstants = HashMap[String, Node]()
   var visited = List[Node]()
   var unorderedClauses = 0
-
+  var cache: MMap[(String, String), Int] = scala.collection.mutable.HashMap[(String, String), Int]()
 
   def parsertest() = {
     SPASSIntermediateFormatParser.parseDFGFromFile(new File("input/conf/test.dfg"))
@@ -31,6 +32,16 @@ class Partition extends ClauseStoragePartitioning with Logging {
 
 
     val module0 = SPASSIntermediateFormatParser.parseDFGClauseFromFile(new File("input/conf/aminoacid.dfg"))
+
+    val prec = SPASSIntermediateFormatParser.parseDFGPrecedenceFromFile(new File("input/conf/aminoacid.dfg"))
+    println(prec)
+
+    var i = 0
+    while (i < prec.size - 1) {
+      cache = cache + ((prec(i), prec(i + 1)) -> 1)
+      i = i + 1
+    }
+
 
     val out = new Output
 
@@ -81,8 +92,8 @@ class Partition extends ClauseStoragePartitioning with Logging {
     setPartitions(partitions, nodes)
     out.printPredicates(nodes, "output/" + output)
     out.printPartitions(nodes, "output/" + output)
-    if(unorderedClauses!=0){
-      println(unorderedClauses+" not complete ordered")
+    if (unorderedClauses != 0) {
+      println(unorderedClauses + " not complete ordered")
       unorderedClauses = 0
     }
   }
@@ -101,8 +112,8 @@ class Partition extends ClauseStoragePartitioning with Logging {
       out.printPredicates(nodes, "output/" + output)
     }
     out.printMetis(nodes, hashedges, "output/" + output)
-    if(unorderedClauses!=0){
-      println(unorderedClauses+" not complete ordered")
+    if (unorderedClauses != 0) {
+      println(unorderedClauses + " not complete ordered")
       unorderedClauses = 0
     }
   }
@@ -122,8 +133,8 @@ class Partition extends ClauseStoragePartitioning with Logging {
     }
     addC(partitions)
     out.printMetis(nodes, hashedges, "output/" + output + "_addC")
-    if(unorderedClauses!=0){
-      println(unorderedClauses+" not complete ordered")
+    if (unorderedClauses != 0) {
+      println(unorderedClauses + " not complete ordered")
       unorderedClauses = 0
     }
   }
@@ -195,7 +206,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
       }
 
       var x = List[Node]()
-      if(literalComparison == 1) {
+      if (literalComparison == 1) {
         x = getPredicateOccurence(clause)
         literalCompare(clause)
       }
@@ -698,11 +709,13 @@ class Partition extends ClauseStoragePartitioning with Logging {
       }
     }
   }
-}
 
 
-object PrecedenceComparator {
+  object PrecedenceComparator {
 
-  lazy val precedence = LazyLexicographicPrecedence
-  lazy val literalComparator = new ALCLPOComparator(this)
+    lazy val precedence = LazyLexicographicPrecedence
+    precedence.setCache(cache)
+    lazy val literalComparator = new ALCLPOComparator(this)
+  }
+
 }
