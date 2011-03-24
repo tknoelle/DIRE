@@ -58,13 +58,17 @@ trait Precedence {
 
 object LazyLexicographicPrecedence  extends Precedence {
   // build the precedence list from the linked initial  clausestore
-  val cache : MMap[(String,String),Int] = scala.collection.mutable.HashMap[(String,String),Int]()
+  var cache : MMap[(String,String),Int] = scala.collection.mutable.HashMap[(String,String),Int]()
   
   private val comparator = (x: String, y: String) => (x compareToIgnoreCase y) match {
       case result: Int if (result < 0) => -1
       case result: Int if (result == 0) => 0
       case result: Int if (result > 0) => 1
     }
+
+  def setCache(c:MMap[(String,String),Int]) = {
+    cache = c
+  }
 
   
 

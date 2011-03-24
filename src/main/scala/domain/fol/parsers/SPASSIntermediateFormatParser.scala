@@ -409,18 +409,16 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
   }
 
   def parseDFGClauseFromFile(file: File): List[FOLClause] = {
-    var clauses = List[FOLClause]()
     val lines = scala.io.Source.fromFile(file).mkString
     val text: String = lines
     var t = text.split("end_of_list.")
     for (x: String <- t) {
 
       var tmp = x
-      println(tmp)
       while (tmp.startsWith("\n")) {
         tmp = tmp.replaceFirst("\n", "")
       }
-
+      if (tmp.startsWith("list_of_clauses")) {
         val clauses = SPASSIntermediateFormatParser.parseClauseStore(tmp.concat("end_of_list. "))
         clauses match {
           case None => throw new IllegalStateException("Could not load clauses from file")
@@ -429,10 +427,34 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
           }
         }
       }
+
+    }
     throw new IllegalStateException("Could not load clauses from file")
   }
 
+  def parseDFGPrecedenceFromFile(file: File): List[String] = {
+    val lines = scala.io.Source.fromFile(file).mkString
+    val text: String = lines
+    var t = text.split("end_of_list.")
+    for (x: String <- t) {
 
+      var tmp = x
+      while (tmp.startsWith("\n")) {
+        tmp = tmp.replaceFirst("\n", "")
+      }
+
+      if (tmp.startsWith("list_of_settings")) {
+        val precedence = SPASSIntermediateFormatParser.parseSettings(tmp.concat("end_of_list"))
+        precedence match {
+          case None => throw new IllegalStateException("Could not load precedence from file")
+          case Some(precedence) => {
+            return precedence
+          }
+        }
+      }
+    }
+    throw new IllegalStateException("Could not load precedence from file")
+  }
 
   def parseDFGFromFile(file: File):Map[String, Object] = {
     var content = Map[String, Object]()

@@ -30,7 +30,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
   override def partition(clauses: ClauseStorage) = {
 
 
-    val module0 = SPASSIntermediateFormatParser.parseDFGClauseFromFile(new File("input/conf/test.dfg"))
+    val module0 = SPASSIntermediateFormatParser.parseDFGClauseFromFile(new File("input/conf/aminoacid.dfg"))
 
     val out = new Output
 
@@ -45,12 +45,6 @@ class Partition extends ClauseStoragePartitioning with Logging {
     setPartitions(partitions, functions)
     propertyHierarchy
 
-    var x = edges
-    while(!x.isEmpty){
-      println(x.head.getNodes.head.getName+" -> "+x.head.getNodes.tail.head.getName)
-      x = x.tail
-    }
-    println(unorderedClauses)
 
     //printGraph(g, "/home/tk/hiwi/DIRE/input/conf/output")
     out.printVertices(constants, functions, nodes, "output/test")
@@ -78,7 +72,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
    * NW Partitioning called from the DIREShell
    */
   def nw(path: String, partitions: Int, output: String, property: Int, edges: Int) = {
-    val module0 = SPASSIntermediateFormatParser.parseDFGFromFile(new File(path))
+    val module0 = SPASSIntermediateFormatParser.parseDFGClauseFromFile(new File(path))
     val out = new Output
     getClauses(module0, edges)
     if (property == 1) {
@@ -99,7 +93,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
   def metis(path: String, output: String, property: Int, edges: Int) = {
     val out = new Output
     if (nodes.isEmpty) {
-      val module0 = SPASSIntermediateFormatParser.parseDFGFromFile(new File(path))
+      val module0 = SPASSIntermediateFormatParser.parseDFGClauseFromFile(new File(path))
       getClauses(module0, edges)
       if (property == 1) {
         propertyHierarchy
@@ -119,7 +113,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
   def metisaddC(path: String, partitions: Int, output: String, property: Int, edges: Int) = {
     val out = new Output
     if (nodes.isEmpty) {
-      val module0 = SPASSIntermediateFormatParser.parseDFGFromFile(new File(path))
+      val module0 = SPASSIntermediateFormatParser.parseDFGClauseFromFile(new File(path))
       getClauses(module0, edges)
       if (property == 1) {
         propertyHierarchy
@@ -140,7 +134,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
   def precedence(path: String, output: String, property: Int, edges: Int) = {
     val out = new Output
     if (nodes.isEmpty) {
-      val module0 = SPASSIntermediateFormatParser.parseDFGFromFile(new File(path))
+      val module0 = SPASSIntermediateFormatParser.parseDFGClauseFromFile(new File(path))
       getClauses(module0, edges)
       if (property == 1) {
         propertyHierarchy
@@ -704,34 +698,11 @@ class Partition extends ClauseStoragePartitioning with Logging {
       }
     }
   }
-
-
 }
 
-object Precedence  extends Precedence {
-  // build the precedence list from the linked initial  clausestore
-  val cache : MMap[(String,String),Int] = scala.collection.mutable.HashMap[(String,String),Int]()
-
-  private val comparator = (x: String, y: String) => (x compareToIgnoreCase y) match {
-      case result: Int if (result < 0) => -1
-      case result: Int if (result == 0) => 0
-      case result: Int if (result > 0) => 1
-    }
-
-
-
-  override def compare(a: String, b: String) = {
-    // check if we already compared this, if not add to cache
-    val compared = comparator(a,b)
-    cache.getOrElseUpdate((a,b),comparator(a,b))
-
-  }
-}
 
 object PrecedenceComparator {
 
-  lazy val precedence = Precedence
+  lazy val precedence = LazyLexicographicPrecedence
   lazy val literalComparator = new ALCLPOComparator(this)
-
-
 }
