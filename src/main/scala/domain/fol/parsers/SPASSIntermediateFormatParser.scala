@@ -408,6 +408,32 @@ object SPASSIntermediateFormatParser extends StandardTokenParsers with Logging {
 
   }
 
+  def parseDFGClauseFromFile(file: File): List[FOLClause] = {
+    var clauses = List[FOLClause]()
+    val lines = scala.io.Source.fromFile(file).mkString
+    val text: String = lines
+    var t = text.split("end_of_list.")
+    for (x: String <- t) {
+
+      var tmp = x
+      println(tmp)
+      while (tmp.startsWith("\n")) {
+        tmp = tmp.replaceFirst("\n", "")
+      }
+
+        val clauses = SPASSIntermediateFormatParser.parseClauseStore(tmp.concat("end_of_list. "))
+        clauses match {
+          case None => throw new IllegalStateException("Could not load clauses from file")
+          case Some(clauses) => {
+            return clauses
+          }
+        }
+      }
+    throw new IllegalStateException("Could not load clauses from file")
+  }
+
+
+
   def parseDFGFromFile(file: File):Map[String, Object] = {
     var content = Map[String, Object]()
     val lines = scala.io.Source.fromFile(file).mkString

@@ -30,7 +30,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
   override def partition(clauses: ClauseStorage) = {
 
 
-    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File("input/conf/test.dfg"))
+    val module0 = SPASSIntermediateFormatParser.parseDFGClauseFromFile(new File("input/conf/test.dfg"))
 
     val out = new Output
 
@@ -78,7 +78,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
    * NW Partitioning called from the DIREShell
    */
   def nw(path: String, partitions: Int, output: String, property: Int, edges: Int) = {
-    val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
+    val module0 = SPASSIntermediateFormatParser.parseDFGFromFile(new File(path))
     val out = new Output
     getClauses(module0, edges)
     if (property == 1) {
@@ -99,7 +99,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
   def metis(path: String, output: String, property: Int, edges: Int) = {
     val out = new Output
     if (nodes.isEmpty) {
-      val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
+      val module0 = SPASSIntermediateFormatParser.parseDFGFromFile(new File(path))
       getClauses(module0, edges)
       if (property == 1) {
         propertyHierarchy
@@ -119,7 +119,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
   def metisaddC(path: String, partitions: Int, output: String, property: Int, edges: Int) = {
     val out = new Output
     if (nodes.isEmpty) {
-      val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
+      val module0 = SPASSIntermediateFormatParser.parseDFGFromFile(new File(path))
       getClauses(module0, edges)
       if (property == 1) {
         propertyHierarchy
@@ -140,7 +140,7 @@ class Partition extends ClauseStoragePartitioning with Logging {
   def precedence(path: String, output: String, property: Int, edges: Int) = {
     val out = new Output
     if (nodes.isEmpty) {
-      val module0 = SPASSIntermediateFormatParser.parseFromFile(new File(path))
+      val module0 = SPASSIntermediateFormatParser.parseDFGFromFile(new File(path))
       getClauses(module0, edges)
       if (property == 1) {
         propertyHierarchy
